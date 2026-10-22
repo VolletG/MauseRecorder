@@ -1,0 +1,63 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build & publish Windows x64
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build -c Release --no-restore -v:minimal
+
+      - name: Publish self-contained single file
+        run: >
+          dotnet publish -c Release -r win-x64 --no-restore
+          -p:PublishSingleFile=true
+          -p:SelfContained=true
+          -p:IncludeNativeLibrariesForSelfExtract=true
+          -p:EnableCompressionInSingleFile=true
+          -o publish
+
+      - name: Package zip
+        shell: pwsh
+        run: |
+          $zip = "MauseRecorder-win-x64.zip"
+          Compress-Archive -Path "publish/*" -DestinationPath $zip -Force
+          Write-Host "Packaged $zip"
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: MauseRecorder-win-x64
+          path: MauseRecorder-win-x64.zip
+          if-no-files-found: error
+
+      - name: Create GitHub release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          name: MauseRecorder ${{ github.ref_name }}
+          files: MauseRecorder-win-x64.zip
+          generate_release_notes: true
+          draft: false
+          prerelease: false

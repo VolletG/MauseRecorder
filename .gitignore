@@ -1,0 +1,24 @@
+# Build output
+bin/
+obj/
+out/
+publish/
+artifacts/
+*.user
+*.suo
+.vs/
+.idea/
+.vscode/
+
+# Local recordings and settings
+recordings/
+*.mrec
+settings.json
+
+# OS files
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Local scratch files (keep docs/banner.png and docs/screenshots/*)
+*.tmp

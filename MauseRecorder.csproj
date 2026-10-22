@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>MauseRecorder</RootNamespace>
+    <AssemblyName>MauseRecorder</AssemblyName>
+    <ApplicationIcon>Assets\app.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Version>1.0.0</Version>
+    <Authors>MauseRecorder</Authors>
+    <Company>MauseRecorder</Company>
+    <Product>MauseRecorder</Product>
+    <Description>A beautiful, portable mouse recorder for Windows. Capture clicks, drags and scrolls — then replay them frame-perfect.</Description>
+    <Copyright>Copyright © 2026 MauseRecorder contributors</Copyright>
+    <RepositoryUrl>https://github.com/VolletG/MauseRecorder</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <InvariantGlobalization>true</InvariantGlobalization>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\app.ico" />
+  </ItemGroup>
+
+</Project>
