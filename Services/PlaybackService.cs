@@ -5,11 +5,16 @@ using MauseRecorder.Models;
 
 namespace MauseRecorder.Services;
 
+public readonly record struct PlaybackWindow(int Left, int Top, int Width, int Height);
+
 public sealed class PlaybackOptions
 {
     public double Speed { get; init; } = 1.0;
     public bool Loop { get; init; }
     public bool GremlinMode { get; init; }
+
+    /// <summary>Current rect of the window this take is bound to, if it is open.</summary>
+    public PlaybackWindow? Window { get; init; }
 }
 
 public sealed record PlaybackProgress(double Fraction, int LoopNumber, bool IsComplete);
@@ -18,14 +23,49 @@ public sealed class PlaybackService
 {
     public event EventHandler? ClickFeedback;
 
-    public async Task PlayAsync(
+    public Task PlayAsync(
         Recording recording,
         PlaybackOptions options,
         CancellationToken cancellationToken,
         IProgress<PlaybackProgress>? progress = null)
     {
-        if (recording.Events.Count == 0) return;
+        if (recording.Events.Count == 0) return Task.CompletedTask;
 
+        // Playback runs on a dedicated thread: dispatching every step through the
+        // UI thread added scheduling jitter and made the cursor visibly stutter.
+        var completion = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                PlayCore(recording, options, cancellationToken, progress);
+                completion.TrySetResult(true);
+            }
+            catch (OperationCanceledException)
+            {
+                completion.TrySetCanceled(cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                completion.TrySetException(ex);
+            }
+        })
+        {
+            IsBackground = true,
+            Name = "MauseRecorder playback",
+            Priority = ThreadPriority.AboveNormal
+        };
+
+        thread.Start();
+        return completion.Task;
+    }
+
+    private void PlayCore(
+        Recording recording,
+        PlaybackOptions options,
+        CancellationToken cancellationToken,
+        IProgress<PlaybackProgress>? progress)
+    {
         var speed = Math.Clamp(options.Speed, 0.25, 5);
         var screen = ScreenMetrics.VirtualScreen();
         var events = recording.Events;
@@ -42,10 +82,9 @@ public sealed class PlaybackService
                 foreach (var mouseEvent in events)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
-                    await DelayUntilAsync(clock, mouseEvent.Time / speed, cancellationToken);
+                    DelayUntil(clock, mouseEvent.Time / speed, cancellationToken);
 
-                    var x = mouseEvent.X;
-                    var y = mouseEvent.Y;
+                    var (x, y) = MapToWindow(mouseEvent, recording, options.Window);
 
                     if (options.GremlinMode)
                     {
@@ -74,13 +113,40 @@ public sealed class PlaybackService
                 }
 
                 progress?.Report(new PlaybackProgress(1, loop, false));
-                await Task.Delay(220, cancellationToken);
+                Sleep(220, cancellationToken);
             }
         }
         finally
         {
             NativeMethods.TimeEndPeriod(1);
         }
+    }
+
+    private static (int X, int Y) MapToWindow(MouseEvent mouseEvent, Recording recording, PlaybackWindow? window)
+    {
+        if (window is not { } current
+            || recording.TargetWindowWidth <= 0
+            || recording.TargetWindowHeight <= 0)
+        {
+            return (mouseEvent.X, mouseEvent.Y);
+        }
+
+        var recordedLeft = recording.TargetWindowLeft;
+        var recordedTop = recording.TargetWindowTop;
+        var recordedRight = recordedLeft + recording.TargetWindowWidth;
+        var recordedBottom = recordedTop + recording.TargetWindowHeight;
+
+        // Only remap points that were inside the recorded window. Clicks that
+        // intentionally landed elsewhere keep their absolute screen position.
+        if (mouseEvent.X < recordedLeft || mouseEvent.X > recordedRight ||
+            mouseEvent.Y < recordedTop || mouseEvent.Y > recordedBottom)
+        {
+            return (mouseEvent.X, mouseEvent.Y);
+        }
+
+        var x = current.Left + (mouseEvent.X - recordedLeft) * current.Width / (double)recording.TargetWindowWidth;
+        var y = current.Top + (mouseEvent.Y - recordedTop) * current.Height / (double)recording.TargetWindowHeight;
+        return ((int)Math.Round(x), (int)Math.Round(y));
     }
 
     private static void SendMouseEvent(MouseEvent mouseEvent, int x, int y, ScreenMetrics screen)
@@ -138,19 +204,34 @@ public sealed class PlaybackService
         return (Math.Clamp(nx, 0, 65535), Math.Clamp(ny, 0, 65535));
     }
 
-    private static async Task DelayUntilAsync(Stopwatch clock, double targetMs, CancellationToken cancellationToken)
+    /// <summary>
+    /// High-resolution wait: sleep for the bulk of the gap, then spin for the
+    /// last ~1.5 ms so moves land at their recorded timestamps.
+    /// </summary>
+    private static void DelayUntil(Stopwatch clock, double targetMs, CancellationToken cancellationToken)
     {
         while (true)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             var remaining = targetMs - clock.Elapsed.TotalMilliseconds;
             if (remaining <= 0) return;
 
             if (remaining > 16)
-                await Task.Delay((int)Math.Min(remaining - 8, 30), cancellationToken);
-            else if (remaining > 2)
-                await Task.Delay(1, cancellationToken);
+                Thread.Sleep((int)Math.Min(remaining - 8, 30));
+            else if (remaining > 1.5)
+                Thread.Sleep(1);
             else
                 Thread.SpinWait(120);
+        }
+    }
+
+    private static void Sleep(int milliseconds, CancellationToken cancellationToken)
+    {
+        var deadline = Environment.TickCount64 + milliseconds;
+        while (Environment.TickCount64 < deadline)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            Thread.Sleep(5);
         }
     }
 }

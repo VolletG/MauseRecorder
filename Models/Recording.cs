@@ -45,6 +45,22 @@ public sealed class Recording
     public int ScreenHeight { get; set; }
     public List<MouseEvent> Events { get; set; } = [];
 
+    // The window this take was recorded in, so a replay can bring it back
+    // to the foreground and map coordinates if it moved or was resized.
+    public string? TargetWindowTitle { get; set; }
+    public string? TargetProcessName { get; set; }
+    public int TargetWindowLeft { get; set; }
+    public int TargetWindowTop { get; set; }
+    public int TargetWindowWidth { get; set; }
+    public int TargetWindowHeight { get; set; }
+
+    [JsonIgnore]
+    public bool HasTarget => TargetWindowWidth > 0 && TargetWindowHeight > 0
+                             && !string.IsNullOrWhiteSpace(TargetWindowTitle);
+
+    [JsonIgnore]
+    public string TargetLabel => HasTarget ? $"  ·  {TargetWindowTitle}" : "";
+
     [JsonIgnore]
     public string? FilePath { get; set; }
 

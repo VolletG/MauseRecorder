@@ -1,9 +1,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.IO;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -11,14 +9,12 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using MauseRecorder.Controls;
 using MauseRecorder.Interop;
 using MauseRecorder.Models;
 using MauseRecorder.Services;
 using MauseRecorder.Windows;
-using Microsoft.Win32;
 using Shapes = System.Windows.Shapes;
 
 namespace MauseRecorder;
@@ -104,7 +100,6 @@ public partial class MainWindow : Window
         UpdateSpeedLabels();
         SetCurrentRecording(_currentRecording);
         DataPathText.Text = _storage.RootDirectory;
-        UpdateHeatmap();
         UpdateArchiveSummary();
         SetStatusReady(T("S_Waiting_for_a_take"));
 
@@ -230,13 +225,11 @@ public partial class MainWindow : Window
     {
         RecorderPage.Visibility = page == "recorder" ? Visibility.Visible : Visibility.Collapsed;
         ArchivePage.Visibility = page == "archive" ? Visibility.Visible : Visibility.Collapsed;
-        HeatmapPage.Visibility = page == "heatmap" ? Visibility.Visible : Visibility.Collapsed;
         SettingsPage.Visibility = page == "settings" ? Visibility.Visible : Visibility.Collapsed;
 
         FrameworkElement? visible = page switch
         {
             "archive" => ArchivePage,
-            "heatmap" => HeatmapPage,
             "settings" => SettingsPage,
             _ => RecorderPage
         };
@@ -251,10 +244,6 @@ public partial class MainWindow : Window
         {
             _archiveView.Refresh();
             UpdateArchiveEmptyState();
-        }
-        else if (page == "heatmap")
-        {
-            UpdateHeatmap();
         }
         else if (page == "settings")
         {
@@ -422,7 +411,6 @@ public partial class MainWindow : Window
         QueueSaveSettings();
 
         SetCurrentRecording(recording);
-        UpdateHeatmap();
         UpdateArchiveSummary();
         RestoreAfterRecording();
         SetStatusReady(F("S_Last_take", recording.Name));
@@ -591,23 +579,29 @@ public partial class MainWindow : Window
         _playCts = cts;
         var token = cts.Token;
 
-        if (_settings.MinimizeOnPlayback && WindowState != WindowState.Minimized)
-        {
-            _minimizedForPlayback = true;
-            WindowState = WindowState.Minimized;
-        }
-
         SetPlaybackUi(true);
         var completed = false;
         var failed = false;
+        PlaybackWindow? targetWindow = null;
 
         try
         {
+            // Bring the bound window forward while MauseRecorder is still the
+            // foreground app; minimising first would make the OS block us.
+            targetWindow = await ActivateTargetWindowAsync(recording, token);
+
+            if (_settings.MinimizeOnPlayback && WindowState != WindowState.Minimized)
+            {
+                _minimizedForPlayback = true;
+                WindowState = WindowState.Minimized;
+            }
+
             var options = new PlaybackOptions
             {
                 Speed = _settings.PlaybackSpeed,
                 Loop = _settings.LoopPlayback,
-                GremlinMode = _settings.GremlinMode
+                GremlinMode = _settings.GremlinMode,
+                Window = targetWindow
             };
 
             var progress = new Progress<PlaybackProgress>(p =>
@@ -655,6 +649,18 @@ public partial class MainWindow : Window
                 }
             }
         }
+    }
+
+    private static async Task<PlaybackWindow?> ActivateTargetWindowAsync(Recording recording, CancellationToken token)
+    {
+        if (!recording.HasTarget) return null;
+
+        var hwnd = WindowBinder.Find(recording);
+        if (hwnd == IntPtr.Zero) return null;
+
+        WindowBinder.RestoreAndActivate(hwnd);
+        await Task.Delay(140, token);
+        return WindowBinder.CurrentRect(hwnd);
     }
 
     private void StopPlayback() => _playCts?.Cancel();
@@ -880,7 +886,6 @@ public partial class MainWindow : Window
             SetCurrentRecording(_recordings.FirstOrDefault());
 
         UpdateArchiveSummary();
-        UpdateHeatmap();
         ShowToast(T("S_Take_deleted"), T("S_Take_deleted_body"), "✕");
     }
 
@@ -909,214 +914,10 @@ public partial class MainWindow : Window
         QueueSaveSettings();
         SetCurrentRecording(null);
         UpdateArchiveSummary();
-        UpdateHeatmap();
         ShowToast(T("S_Archive_cleared"), T("S_Archive_cleared_body"), "✓");
     }
 
     private void OpenFolder_Click(object sender, RoutedEventArgs e) => _storage.OpenDataFolder();
-
-    // ═══════════════════════════════ Heatmap ═══════════════════════════════
-
-    private void UpdateHeatmap()
-    {
-        Heatmap.SetData(_recordings);
-
-        var clicks = new List<(Recording Recording, MouseEvent Event)>();
-        foreach (var recording in _recordings)
-        {
-            foreach (var mouseEvent in recording.Events.Where(ev => ev.IsClickDown))
-                clicks.Add((recording, mouseEvent));
-        }
-
-        HeatTotal.Text = clicks.Count.ToString("N0");
-        HeatTakesLabel.Text = _recordings.Count == 0
-            ? T("S_No_data_yet")
-            : F("S_across_takes", $"{_recordings.Count} {P("S_take", _recordings.Count)}");
-        HeatTakeCount.Text = $"{_recordings.Count} {P("S_take", _recordings.Count)}";
-        HeatmapEmpty.Visibility = clicks.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
-
-        if (clicks.Count == 0)
-        {
-            HeatHotspot.Text = "—";
-            HeatButton.Text = "—";
-            HeatLeftLabel.Text = "L 0%";
-            HeatRightLabel.Text = "R 0%";
-            HeatLeftColumn.Width = new GridLength(1, GridUnitType.Star);
-            HeatRightColumn.Width = new GridLength(1, GridUnitType.Star);
-            RoastText.Text = GenerateRoast();
-            return;
-        }
-
-        var left = 0;
-        var right = 0;
-        var top = 0;
-        var bottom = 0;
-        var leftButtons = 0;
-        var rightButtons = 0;
-        var middleButtons = 0;
-        var otherButtons = 0;
-
-        foreach (var (recording, mouseEvent) in clicks)
-        {
-            var nx = (mouseEvent.X - recording.ScreenLeft) / (double)Math.Max(1, recording.ScreenWidth);
-            var ny = (mouseEvent.Y - recording.ScreenTop) / (double)Math.Max(1, recording.ScreenHeight);
-
-            if (nx < 0.5) left++; else right++;
-            if (ny < 0.5) top++; else bottom++;
-
-            switch (mouseEvent.Type)
-            {
-                case MouseEventType.LeftDown: leftButtons++; break;
-                case MouseEventType.RightDown: rightButtons++; break;
-                case MouseEventType.MiddleDown: middleButtons++; break;
-                default: otherButtons++; break;
-            }
-        }
-
-        var total = clicks.Count;
-        var leftRatio = left / (double)total;
-        var rightRatio = right / (double)total;
-        HeatLeftLabel.Text = $"L {leftRatio * 100:0}%";
-        HeatRightLabel.Text = $"R {rightRatio * 100:0}%";
-        HeatLeftColumn.Width = new GridLength(Math.Max(0.01, leftRatio), GridUnitType.Star);
-        HeatRightColumn.Width = new GridLength(Math.Max(0.01, rightRatio), GridUnitType.Star);
-
-        var horizontal = left >= right ? T("S_Left") : T("S_Right");
-        var vertical = top >= bottom ? T("S_top") : T("S_bottom");
-        HeatHotspot.Text = $"{horizontal} {vertical}";
-
-        var favourite = new[]
-        {
-            (T("S_Left_click"), leftButtons),
-            (T("S_Right_click"), rightButtons),
-            (T("S_Middle_click"), middleButtons),
-            (T("S_Side_button"), otherButtons)
-        }.OrderByDescending(item => item.Item2).First();
-        HeatButton.Text = favourite.Item1;
-
-        RoastText.Text = GenerateRoast();
-    }
-
-    private string GenerateRoast()
-    {
-        var clicks = _recordings.Sum(r => r.ClickCount);
-        var scrolls = _recordings.Sum(r => r.ScrollCount);
-        var moves = _recordings.Sum(r => r.MoveCount);
-        var totalMs = _recordings.Sum(r => r.DurationMs);
-
-        var right = 0;
-        var left = 0;
-        foreach (var recording in _recordings)
-        {
-            foreach (var e in recording.Events.Where(ev => ev.IsClickDown))
-            {
-                var x = e.X - recording.ScreenLeft;
-                if (x < recording.ScreenWidth / 2.0) left++; else right++;
-            }
-        }
-
-        var lines = new List<string>();
-        if (clicks == 0)
-        {
-            lines.Add(T("S_Roast_no_clicks"));
-            lines.Add(T("S_Roast_record"));
-            lines.Add(T("S_Roast_blank"));
-            return lines[_random.Next(lines.Count)];
-        }
-
-        if (clicks >= 500) lines.Add(T("S_Roast_goblin"));
-        else if (clicks >= 120) lines.Add(T("S_Roast_lots"));
-        if (right > left * 1.8) lines.Add(T("S_Roast_right"));
-        else if (left > right * 1.8) lines.Add(T("S_Roast_left"));
-        if (scrolls >= 30) lines.Add(T("S_Roast_scroll"));
-        if (moves > clicks * 40 && clicks > 0) lines.Add(T("S_Roast_move"));
-        if (totalMs > 5 * 60_000) lines.Add(T("S_Roast_time"));
-        if (_recordings.Count >= 10) lines.Add(T("S_Roast_archive"));
-
-        lines.Add(T("S_Roast_range"));
-        lines.Add(T("S_Roast_intentional"));
-        lines.Add(T("S_Roast_not_problem"));
-        lines.Add(T("S_Roast_heatmap"));
-
-        return lines[_random.Next(lines.Count)];
-    }
-
-    private void Roast_Click(object sender, RoutedEventArgs e)
-    {
-        RoastText.Text = GenerateRoast();
-    }
-
-    private void CopyStats_Click(object sender, RoutedEventArgs e)
-    {
-        try
-        {
-            var clicks = _recordings.Sum(r => r.ClickCount);
-            var totalMs = _recordings.Sum(r => r.DurationMs);
-            var builder = new StringBuilder();
-            builder.AppendLine(T("S_Stats_header"));
-            builder.AppendLine("────────────────────────────");
-            builder.AppendLine($"{T("S_Takes_colon")}        {_recordings.Count}");
-            builder.AppendLine($"{T("S_Clicks_colon")}       {clicks:N0}");
-            builder.AppendLine($"{T("S_Recorded_colon")}     {FormatTotalDuration(totalMs)}");
-            builder.AppendLine($"{T("S_Hot_zone_colon")}     {HeatHotspot.Text}");
-            builder.AppendLine($"{T("S_Favourite_colon")}    {HeatButton.Text}");
-            builder.AppendLine();
-            builder.AppendLine(T("S_Copy_footer"));
-            Clipboard.SetText(builder.ToString());
-            ShowToast(T("S_Stats_copied"), T("S_Stats_copied_body"), "⧉");
-        }
-        catch (Exception ex)
-        {
-            ShowToast(T("S_Clipboard_said_no"), ex.Message, "!", true);
-        }
-    }
-
-    private void ExportHeatmap_Click(object sender, RoutedEventArgs e)
-    {
-        var dialog = new SaveFileDialog
-        {
-            Title = T("S_Export_your_heatmap"),
-            FileName = $"mauserecorder-heatmap-{DateTime.Now:yyyyMMdd}.png",
-            Filter = "PNG image (*.png)|*.png",
-            DefaultExt = ".png",
-            AddExtension = true,
-            InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures)
-        };
-
-        if (dialog.ShowDialog(this) != true) return;
-
-        try
-        {
-            ShareRoot.UpdateLayout();
-            var width = ShareRoot.ActualWidth;
-            var height = ShareRoot.ActualHeight;
-            if (width < 10 || height < 10)
-            {
-                ShowToast(T("S_Export_failed"), T("S_Export_failed_body"), "!", true);
-                return;
-            }
-
-            const double scale = 2;
-            var bitmap = new RenderTargetBitmap(
-                (int)Math.Ceiling(width * scale),
-                (int)Math.Ceiling(height * scale),
-                96 * scale,
-                96 * scale,
-                PixelFormats.Pbgra32);
-            bitmap.Render(ShareRoot);
-
-            var encoder = new PngBitmapEncoder();
-            encoder.Frames.Add(BitmapFrame.Create(bitmap));
-            using var stream = File.Create(dialog.FileName);
-            encoder.Save(stream);
-
-            ShowToast(T("S_Card_exported"), T("S_Card_exported_body"), "↓");
-        }
-        catch (Exception ex)
-        {
-            ShowToast(T("S_Export_failed"), ex.Message, "!", true);
-        }
-    }
 
     // ═══════════════════════════════ Settings ═══════════════════════════════
 
@@ -1557,7 +1358,6 @@ public partial class MainWindow : Window
             SetCurrentRecording(_currentRecording);
 
         UpdateArchiveSummary();
-        UpdateHeatmap();
         UpdateSpeedLabels();
         DataPathText.Text = _storage.RootDirectory;
     }

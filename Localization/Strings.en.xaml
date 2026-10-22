@@ -14,7 +14,7 @@
     <sys:String x:Key="S_A_diary_of_every_place_your_cursor_has_ever_been">A diary of every place your cursor has ever been.</sys:String>
     <sys:String x:Key="S_A_satisfying_tick_for_every_click">A satisfying tick for every click.</sys:String>
     <sys:String x:Key="S_A_tiny_floating_stop_button_while_recording">A tiny floating stop button while recording.</sys:String>
-    <sys:String x:Key="S_A_tiny_Windows_studio_for_recording_replaying_an">A tiny Windows studio for recording, replaying and gently roasting your mouse habits.</sys:String>
+    <sys:String x:Key="S_A_tiny_Windows_studio_for_recording_replaying_an">A tiny Windows studio for recording and replaying your mouse.</sys:String>
     <sys:String x:Key="S_Accent_colour">Accent colour</sys:String>
     <sys:String x:Key="S_Adds_5_px_of_chaos_to_every_click_Unhinged">Adds ±5 px of chaos to every click. Unhinged.</sys:String>
     <sys:String x:Key="S_ALL_TIME_HEATMAP">ALL-TIME HEATMAP</sys:String>
@@ -107,8 +107,8 @@
     <sys:String x:Key="S_Show_hide_window">Show / hide window</sys:String>
     <sys:String x:Key="S_Slow_and_dramatic_or_suspiciously_fast">Slow and dramatic, or suspiciously fast.</sys:String>
     <sys:String x:Key="S_SPEED">SPEED</sys:String>
-    <sys:String x:Key="S_Star_on_GitHub">★  Star on GitHub</sys:String>
-    <sys:String x:Key="S_Star_on_GitHub_2">Star on GitHub</sys:String>
+    <sys:String x:Key="S_Star_on_GitHub">MauseRecorder on GitHub</sys:String>
+    <sys:String x:Key="S_Star_on_GitHub_2">MauseRecorder on GitHub</sys:String>
     <sys:String x:Key="S_Start_recording">Start recording</sys:String>
     <sys:String x:Key="S_Start_stop_recording">Start / stop recording</sys:String>
     <sys:String x:Key="S_Stop">Stop</sys:String>
@@ -123,8 +123,9 @@
     <sys:String x:Key="S_Tip">Tip</sys:String>
     <sys:String x:Key="S_TOTAL_CLICKS">TOTAL CLICKS</sys:String>
     <sys:String x:Key="S_Turn_off_for_clicks_only_teleport_style_takes">Turn off for clicks-only, teleport-style takes.</sys:String>
-    <sys:String x:Key="S_v1_0_0_Made_of_clicks">v1.1.0 · Made of clicks</sys:String>
-    <sys:String x:Key="S_v1_0_0_Windows_10_11">v1.1.0 · Windows 10/11</sys:String>
+    <sys:String x:Key="S_v1_0_0_Made_of_clicks">v1.2.0 · Made of clicks</sys:String>
+    <sys:String x:Key="S_v1_0_0_Windows_10_11">v1.2.0 · Windows 10/11</sys:String>
+    <sys:String x:Key="S_Developed_by">Developed by VolletG · v1.2.0</sys:String>
     <sys:String x:Key="S_Violet">Violet</sys:String>
     <sys:String x:Key="S_Waiting_for_a_take">Waiting for a take</sys:String>
     <sys:String x:Key="S_Watch_demo">Watch demo</sys:String>

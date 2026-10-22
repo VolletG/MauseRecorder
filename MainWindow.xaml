@@ -72,7 +72,7 @@
                                VerticalAlignment="Center" Margin="9,0,0,0" />
                     <Border Background="#11141B" BorderBrush="#242A36" BorderThickness="1" CornerRadius="5"
                             Padding="5,2" Margin="8,1,0,0" VerticalAlignment="Center">
-                        <TextBlock Text="v1.1" FontSize="9" FontWeight="SemiBold" Foreground="{DynamicResource FaintBrush}" />
+                        <TextBlock Text="v1.2" FontSize="9" FontWeight="SemiBold" Foreground="{DynamicResource FaintBrush}" />
                     </Border>
                 </StackPanel>
 
@@ -152,20 +152,6 @@
                                 </StackPanel>
                             </RadioButton>
 
-                            <RadioButton x:Name="NavHeatmap" Style="{StaticResource NavButton}" GroupName="Nav"
-                                         Tag="heatmap" Checked="Nav_Checked">
-                                <StackPanel Orientation="Horizontal">
-                                    <Viewbox Width="17" Height="17" Margin="0,0,11,0">
-                                        <Canvas Width="24" Height="24">
-                                            <Path Data="M2 12 H5.2 A2 2 0 0 1 7.2 10.6 L9.5 2.5 L14.3 21.5 L16.7 13.4 A2 2 0 0 1 18.7 12 H22"
-                                                  Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}"
-                                                  StrokeThickness="1.7" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
-                                        </Canvas>
-                                    </Viewbox>
-                                    <TextBlock Text="{DynamicResource S_Heatmap}" VerticalAlignment="Center" />
-                                </StackPanel>
-                            </RadioButton>
-
                             <RadioButton x:Name="NavSettings" Style="{StaticResource NavButton}" GroupName="Nav"
                                          Tag="settings" Checked="Nav_Checked">
                                 <StackPanel Orientation="Horizontal">
@@ -202,11 +188,11 @@
                             <Button Style="{StaticResource QuietButton}" HorizontalAlignment="Stretch" Padding="10,8"
                                     Click="StarGithub_Click">
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                    <TextBlock Text="★" Foreground="{DynamicResource AccentBrush}" FontSize="12" Margin="0,0,7,0" />
+                                    <TextBlock Text="&#xE8A7;" FontFamily="Segoe MDL2 Assets" Foreground="{DynamicResource AccentBrush}" FontSize="10" Margin="0,0,7,0" VerticalAlignment="Center" />
                                     <TextBlock Text="{DynamicResource S_Star_on_GitHub_2}" FontSize="11.5" Foreground="{DynamicResource MutedBrush}" />
                                 </StackPanel>
                             </Button>
-                            <TextBlock Text="{DynamicResource S_v1_0_0_Windows_10_11}" Style="{StaticResource Caption}" FontSize="9.5"
+                            <TextBlock Text="{DynamicResource S_Developed_by}" Style="{StaticResource Caption}" FontSize="9.5"
                                        HorizontalAlignment="Center" Margin="0,8,0,0" Foreground="#414858" />
                         </StackPanel>
                     </Grid>
@@ -227,7 +213,8 @@
                                     <TextBlock Text="{DynamicResource S_Point_Click_Let_it_repeat}" Style="{StaticResource Caption}" Margin="0,3,0,0" />
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                                    <Button Style="{StaticResource GhostButton}" Click="Demo_Click" Padding="14,9">
+                                    <Button x:Name="DemoButton" AutomationProperties.AutomationId="DemoButton"
+                                            Style="{StaticResource GhostButton}" Click="Demo_Click" Padding="14,9">
                                         <StackPanel Orientation="Horizontal">
                                             <TextBlock Text="✦" Foreground="{DynamicResource AccentBrush}" Margin="0,0,7,0" FontSize="11" />
                                             <TextBlock Text="{DynamicResource S_Watch_demo}" FontSize="12" />
@@ -593,6 +580,9 @@
                                                     <TextBlock Text="{Binding CreatedLabel}" Style="{StaticResource Caption}" FontSize="10.5" />
                                                     <TextBlock Text="  ·  " Style="{StaticResource Caption}" FontSize="10.5" Foreground="#414858" />
                                                     <TextBlock Text="{Binding Summary}" Style="{StaticResource Caption}" FontSize="10.5" />
+                                                    <TextBlock Text="{Binding TargetLabel}" Style="{StaticResource Caption}" FontSize="10.5"
+                                                               Foreground="{DynamicResource AccentBrush}" TextTrimming="CharacterEllipsis"
+                                                               MaxWidth="220" ToolTip="{Binding TargetWindowTitle}" />
                                                 </StackPanel>
                                             </StackPanel>
 
@@ -603,10 +593,11 @@
                                                                FontSize="10" Foreground="#B2B8C6" />
                                                 </Border>
                                                 <Button Style="{StaticResource IconButton}" Content="&#xE768;"
+                                                        AutomationProperties.AutomationId="PlayTakeButton"
                                                         FontFamily="Segoe MDL2 Assets" FontSize="12" ToolTip="{DynamicResource S_Play_take}"
                                                         Tag="{Binding}" Click="PlayRecording_Click" />
                                                 <Button Style="{StaticResource IconButton}" Content="&#xE70F;"
-                                                        FontFamily="Segoe MDL2 Assets" FontSize="12" ToolTip="{DynamicResource S_Rename}"
+                                                        AutomationProperties.AutomationId="RenameTakeButton" FontFamily="Segoe MDL2 Assets" FontSize="12" ToolTip="{DynamicResource S_Rename}"
                                                         Tag="{Binding}" Click="RenameRecording_Click" />
                                                 <Button Style="{StaticResource IconButton}" Content="&#xE74D;"
                                                         FontFamily="Segoe MDL2 Assets" FontSize="12" ToolTip="{DynamicResource S_Delete}"
@@ -636,137 +627,6 @@
                             </Border>
                         </Grid>
                     </Grid>
-
-                    <!-- ═════════════ HEATMAP PAGE ═════════════ -->
-                    <ScrollViewer x:Name="HeatmapPage" Style="{StaticResource PageScroll}" Visibility="Collapsed">
-                        <StackPanel Margin="0,0,8,0">
-                            <Grid>
-                                <StackPanel>
-                                    <TextBlock Text="{DynamicResource S_Heatmap}" Style="{StaticResource H1}" FontSize="30" LineHeight="33" />
-                                    <TextBlock Text="{DynamicResource S_A_diary_of_every_place_your_cursor_has_ever_been}" Style="{StaticResource Caption}" Margin="0,3,0,0" />
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                                    <Button Content="{DynamicResource S_Copy_stats}" Style="{StaticResource GhostButton}" Click="CopyStats_Click" Padding="14,9" FontSize="12" />
-                                    <Button Style="{StaticResource AccentQuietButton}" Click="ExportHeatmap_Click" Margin="8,0,0,0">
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="↓" FontSize="12" Margin="0,0,7,0" />
-                                            <TextBlock Text="{DynamicResource S_Export_card}" FontSize="12" />
-                                        </StackPanel>
-                                    </Button>
-                                </StackPanel>
-                            </Grid>
-
-                            <Border x:Name="ShareRoot" Background="{DynamicResource BgBrush}" Margin="0,18,0,0" Padding="0">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="310" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <Border Style="{StaticResource Card}" Padding="22,18">
-                                        <Grid>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto" />
-                                                <RowDefinition Height="*" />
-                                                <RowDefinition Height="Auto" />
-                                            </Grid.RowDefinitions>
-
-                                            <Grid>
-                                                <StackPanel>
-                                                    <TextBlock Text="{DynamicResource S_ALL_TIME_HEATMAP}" Style="{StaticResource Eyebrow}" />
-                                                    <TextBlock Text="{DynamicResource S_Where_your_clicks_land}" Style="{StaticResource H2}" FontSize="21" Margin="0,5,0,0" />
-                                                </StackPanel>
-                                                <Border Background="#11141B" BorderBrush="{DynamicResource LineBrush}" BorderThickness="1"
-                                                        CornerRadius="99" Padding="10,5" HorizontalAlignment="Right" VerticalAlignment="Top">
-                                                    <TextBlock x:Name="HeatTakeCount" Text="{DynamicResource S_0_takes}" Style="{StaticResource Caption}" FontSize="10" />
-                                                </Border>
-                                            </Grid>
-
-                                            <Grid Grid.Row="1" Margin="0,12,0,0">
-                                                <controls:HeatmapControl x:Name="Heatmap" Height="402" />
-                                                <StackPanel x:Name="HeatmapEmpty" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                    <TextBlock Text="{DynamicResource S_Nothing_to_heat_up_yet}" Style="{StaticResource H3}" HorizontalAlignment="Center" />
-                                                    <TextBlock Text="{DynamicResource S_Record_a_take_or_summon_the_demo}" Style="{StaticResource Caption}" HorizontalAlignment="Center" Margin="0,4,0,0" />
-                                                    <Button Content="{DynamicResource S_Watch_demo}" Style="{StaticResource AccentQuietButton}" Click="Demo_Click"
-                                                            HorizontalAlignment="Center" Margin="0,12,0,0" />
-                                                </StackPanel>
-                                            </Grid>
-
-                                            <Grid Grid.Row="2" Margin="0,8,0,0">
-                                                <StackPanel Orientation="Horizontal">
-                                                    <TextBlock Text="{DynamicResource S_COLD}" Style="{StaticResource Micro}" VerticalAlignment="Center" Margin="0,0,6,0" />
-                                                    <Border Width="82" Height="6" CornerRadius="3">
-                                                        <Border.Background>
-                                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                                                                <GradientStop Color="#2A1D4F" Offset="0" />
-                                                                <GradientStop Color="#8B5CF6" Offset="0.45" />
-                                                                <GradientStop Color="#FF9142" Offset="0.75" />
-                                                                <GradientStop Color="#FF5668" Offset="1" />
-                                                            </LinearGradientBrush>
-                                                        </Border.Background>
-                                                    </Border>
-                                                    <TextBlock Text="{DynamicResource S_HOT}" Style="{StaticResource Micro}" VerticalAlignment="Center" Margin="6,0,0,0" />
-                                                </StackPanel>
-                                                <TextBlock Text="{DynamicResource S_Click_density_all_takes}" Style="{StaticResource Caption}" FontSize="10"
-                                                           HorizontalAlignment="Right" VerticalAlignment="Center" />
-                                            </Grid>
-                                        </Grid>
-                                    </Border>
-
-                                    <StackPanel Grid.Column="1" Margin="14,0,0,0">
-                                        <Border Style="{StaticResource Card}" Padding="18,15">
-                                            <StackPanel>
-                                                <TextBlock Text="{DynamicResource S_TOTAL_CLICKS}" Style="{StaticResource Micro}" />
-                                                <TextBlock x:Name="HeatTotal" Text="0" Style="{StaticResource Metric}" FontSize="38" Margin="0,2,0,0" />
-                                                <TextBlock x:Name="HeatTakesLabel" Text="{DynamicResource S_No_data_yet}" Style="{StaticResource Caption}" FontSize="10.5" />
-
-                                                <Border Style="{StaticResource Divider}" Margin="0,12" />
-
-                                                <Grid Margin="0,0,0,8">
-                                                    <TextBlock Text="{DynamicResource S_Hot_zone}" Style="{StaticResource Caption}" FontSize="11" />
-                                                    <TextBlock x:Name="HeatHotspot" Text="—" FontSize="11.5" FontWeight="SemiBold"
-                                                               HorizontalAlignment="Right" Foreground="{DynamicResource TextBrush}" />
-                                                </Grid>
-                                                <Grid Margin="0,0,0,11">
-                                                    <TextBlock Text="{DynamicResource S_Favourite_button}" Style="{StaticResource Caption}" FontSize="11" />
-                                                    <TextBlock x:Name="HeatButton" Text="—" FontSize="11.5" FontWeight="SemiBold"
-                                                               HorizontalAlignment="Right" Foreground="{DynamicResource TextBrush}" />
-                                                </Grid>
-
-                                                <Grid Height="7">
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition x:Name="HeatLeftColumn" Width="1*" />
-                                                        <ColumnDefinition Width="3" />
-                                                        <ColumnDefinition x:Name="HeatRightColumn" Width="1*" />
-                                                    </Grid.ColumnDefinitions>
-                                                    <Border Grid.Column="0" Background="#FF5668" CornerRadius="4" />
-                                                    <Border Grid.Column="2" Background="{DynamicResource AccentBrush}" CornerRadius="4" />
-                                                </Grid>
-                                                <Grid Margin="0,5,0,0">
-                                                    <TextBlock x:Name="HeatLeftLabel" Text="L 0%" Style="{StaticResource Caption}" FontSize="9" />
-                                                    <TextBlock x:Name="HeatRightLabel" Text="R 0%" Style="{StaticResource Caption}" FontSize="9"
-                                                               HorizontalAlignment="Right" />
-                                                </Grid>
-                                            </StackPanel>
-                                        </Border>
-
-                                        <Border Style="{StaticResource Card}" Padding="18,15" Margin="0,12,0,0">
-                                            <StackPanel>
-                                                <TextBlock Text="{DynamicResource S_CURSOR_ROAST}" Style="{StaticResource Eyebrow}" />
-                                                <TextBlock x:Name="RoastText" Text="{DynamicResource S_Record_a_little_chaos_and_I_ll_judge_your_cursor}"
-                                                           Style="{StaticResource Body}" FontSize="12" FontStyle="Italic" Margin="0,7,0,0" />
-                                                <Button Content="{DynamicResource S_Another_one}" Style="{StaticResource QuietButton}" HorizontalAlignment="Left"
-                                                        Padding="0,8,0,0" Click="Roast_Click" FontSize="11" />
-                                            </StackPanel>
-                                        </Border>
-
-                                        <TextBlock Text="{DynamicResource S_mauserecorder_made_of_clicks}" Style="{StaticResource Caption}" FontSize="8.5"
-                                                   HorizontalAlignment="Center" Margin="0,11,0,0" Foreground="#414858" />
-                                    </StackPanel>
-                                </Grid>
-                            </Border>
-                        </StackPanel>
-                    </ScrollViewer>
 
                     <!-- ═════════════ SETTINGS PAGE ═════════════ -->
                     <ScrollViewer x:Name="SettingsPage" Style="{StaticResource PageScroll}" Visibility="Collapsed">

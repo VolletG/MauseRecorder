@@ -14,7 +14,7 @@
     <sys:String x:Key="S_A_diary_of_every_place_your_cursor_has_ever_been">Дневник каждого места, где побывал ваш курсор.</sys:String>
     <sys:String x:Key="S_A_satisfying_tick_for_every_click">Приятный щелчок на каждый клик.</sys:String>
     <sys:String x:Key="S_A_tiny_floating_stop_button_while_recording">Маленькая плавающая кнопка «стоп» во время записи.</sys:String>
-    <sys:String x:Key="S_A_tiny_Windows_studio_for_recording_replaying_an">Маленькая студия Windows для записи, повтора и лёгкого подшучивания над вашими мышиными привычками.</sys:String>
+    <sys:String x:Key="S_A_tiny_Windows_studio_for_recording_replaying_an">Маленькая студия Windows для записи и повтора движений мыши.</sys:String>
     <sys:String x:Key="S_Accent_colour">Акцентный цвет</sys:String>
     <sys:String x:Key="S_Adds_5_px_of_chaos_to_every_click_Unhinged">Добавляет ±5 px хаоса к каждому клику. Безумие.</sys:String>
     <sys:String x:Key="S_ALL_TIME_HEATMAP">ТЕПЛОВАЯ КАРТА ЗА ВСЁ ВРЕМЯ</sys:String>
@@ -107,8 +107,8 @@
     <sys:String x:Key="S_Show_hide_window">Показать / скрыть окно</sys:String>
     <sys:String x:Key="S_Slow_and_dramatic_or_suspiciously_fast">Медленно и драматично — или подозрительно быстро.</sys:String>
     <sys:String x:Key="S_SPEED">СКОРОСТЬ</sys:String>
-    <sys:String x:Key="S_Star_on_GitHub">★  Звезда на GitHub</sys:String>
-    <sys:String x:Key="S_Star_on_GitHub_2">Звезда на GitHub</sys:String>
+    <sys:String x:Key="S_Star_on_GitHub">MauseRecorder на GitHub</sys:String>
+    <sys:String x:Key="S_Star_on_GitHub_2">MauseRecorder на GitHub</sys:String>
     <sys:String x:Key="S_Start_recording">Начать запись</sys:String>
     <sys:String x:Key="S_Start_stop_recording">Старт / стоп записи</sys:String>
     <sys:String x:Key="S_Stop">Стоп</sys:String>
@@ -123,8 +123,9 @@
     <sys:String x:Key="S_Tip">Совет</sys:String>
     <sys:String x:Key="S_TOTAL_CLICKS">ВСЕГО КЛИКОВ</sys:String>
     <sys:String x:Key="S_Turn_off_for_clicks_only_teleport_style_takes">Отключите для дублей только с кликами — в стиле телепортации.</sys:String>
-    <sys:String x:Key="S_v1_0_0_Made_of_clicks">v1.1.0 · Сделано из кликов</sys:String>
-    <sys:String x:Key="S_v1_0_0_Windows_10_11">v1.1.0 · Windows 10/11</sys:String>
+    <sys:String x:Key="S_v1_0_0_Made_of_clicks">v1.2.0 · Сделано из кликов</sys:String>
+    <sys:String x:Key="S_v1_0_0_Windows_10_11">v1.2.0 · Windows 10/11</sys:String>
+    <sys:String x:Key="S_Developed_by">Разработано VolletG · v1.2.0</sys:String>
     <sys:String x:Key="S_Violet">Фиолетовый</sys:String>
     <sys:String x:Key="S_Waiting_for_a_take">Ожидание дубля</sys:String>
     <sys:String x:Key="S_Watch_demo">Смотреть демо</sys:String>

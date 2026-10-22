@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Windows;
 
 namespace MauseRecorder.Services;
@@ -19,6 +20,14 @@ public static class LocalizationService
     {
         var target = language == Russian ? Russian : English;
         Language = target;
+
+        // Keep numbers/dates in sync with the chosen UI language. Full globalization is
+        // enabled (InvariantGlobalization is off) so Russian text boxes also work.
+        var culture = CultureInfo.GetCultureInfo(target == Russian ? "ru-RU" : "en-US");
+        CultureInfo.DefaultThreadCurrentCulture = culture;
+        CultureInfo.DefaultThreadCurrentUICulture = culture;
+        CultureInfo.CurrentCulture = culture;
+        CultureInfo.CurrentUICulture = culture;
 
         var app = Application.Current;
         if (app is null) return;

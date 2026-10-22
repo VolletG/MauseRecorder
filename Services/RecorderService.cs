@@ -16,6 +16,8 @@ public sealed class RecorderService : IDisposable
     private int _lastX = int.MinValue;
     private int _lastY = int.MinValue;
     private bool _recording;
+    private WindowTargetInfo? _target;
+    private bool _targetCaptured;
 
     public bool IsRecording => _recording;
     public double ElapsedMs => _recording ? _clock.Elapsed.TotalMilliseconds : 0;
@@ -44,6 +46,8 @@ public sealed class RecorderService : IDisposable
         _lastMoveMs = -1000;
         _lastX = int.MinValue;
         _lastY = int.MinValue;
+        _target = null;
+        _targetCaptured = false;
         _clock.Restart();
         _recording = true;
         _hook.Start();
@@ -72,6 +76,12 @@ public sealed class RecorderService : IDisposable
             ScreenTop = NativeMethods.GetSystemMetrics(NativeMethods.SM_YVIRTUALSCREEN),
             ScreenWidth = width > 0 ? width : 1920,
             ScreenHeight = height > 0 ? height : 1080,
+            TargetWindowTitle = _target?.Title,
+            TargetProcessName = _target?.ProcessName,
+            TargetWindowLeft = _target?.Left ?? 0,
+            TargetWindowTop = _target?.Top ?? 0,
+            TargetWindowWidth = _target?.Width ?? 0,
+            TargetWindowHeight = _target?.Height ?? 0,
             Events = [.. _events]
         };
     }
@@ -83,6 +93,13 @@ public sealed class RecorderService : IDisposable
         // Never record interactions with MauseRecorder itself: the HUD stop
         // button should not end up inside your take.
         if (IsOverOwnWindow(e.X, e.Y)) return;
+
+        // Bind the take to the first real app window the user interacts with.
+        if (!_targetCaptured)
+        {
+            _target = WindowBinder.CaptureAt(e.X, e.Y, _ownProcessId);
+            if (_target is not null) _targetCaptured = true;
+        }
 
         var now = _clock.Elapsed.TotalMilliseconds;
 

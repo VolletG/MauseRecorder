@@ -24,7 +24,8 @@ MauseRecorder is a tiny Windows studio for recording and replaying your mouse. P
 
 **Recording & playback**
 - 🎬 Records moves, left / right / middle / X-button clicks and wheel scrolls
-- ⚡ Frame-accurate `SendInput` playback with speed control (0.25× → 5×)
+- ⚡ Smooth, high-resolution `SendInput` playback with speed control (0.25× → 5×)
+- 🪟 **Window-bound takes** — a take remembers the app it was recorded in; replay brings that window forward and remaps the cursor if the window moved or was resized
 - 🔁 Loop mode for replays that never stop
 - ⏱️ Optional countdown before recording starts (so you can switch windows)
 - 🧪 **Watch demo** — instantly replays a heart-shaped cursor path, no recording needed
@@ -33,14 +34,11 @@ MauseRecorder is a tiny Windows studio for recording and replaying your mouse. P
 - 🌑 A deep-black, frameless UI with a hand-crafted dark theme
 - 🎨 Four accent palettes — **Violet, Cyan, Lime, Sunset** — that repaint the whole app instantly
 - 📈 Live **motion timeline** with a waveform and click markers
-- 🗺️ All-time **click heatmap** of everywhere your cursor has ever been
-- 🖼️ One-click **export** of your stats/heatmap as a shareable PNG card
 
 **The fun part**
 - 🎉 **Party mode** — confetti when a replay finishes
 - 👹 **Gremlin mode** — adds ±5 px of chaos to every click
 - 🏆 **Achievements** ("Click Goblin", "Marathon Mouse", "Scroll Lord"…)
-- 😏 **Cursor roasts** — the app gently judges your mouse habits
 - 🔊 Optional click sounds, plus a floating recording HUD
 
 **Quality of life**
@@ -55,17 +53,17 @@ MauseRecorder is a tiny Windows studio for recording and replaying your mouse. P
 | :---: | :---: |
 | ![Recorder](docs/screenshots/recorder.png) | ![Archive](docs/screenshots/archive.png) |
 
-| Heatmap | Settings |
+| Settings | Settings (Русский) |
 | :---: | :---: |
-| ![Heatmap](docs/screenshots/heatmap.png) | ![Settings](docs/screenshots/settings.png) |
+| ![Settings](docs/screenshots/settings.png) | ![Settings in Russian](docs/screenshots/settings-ru.png) |
+
+| Recorder (Русский) | Archive (Русский) |
+| :---: | :---: |
+| ![Recorder in Russian](docs/screenshots/recorder-ru.png) | ![Archive in Russian](docs/screenshots/archive-ru.png) |
 
 | Accent themes | Party mode 🎉 |
 | :---: | :---: |
 | ![Accent themes](docs/screenshots/accent-cyan.png) | ![Party mode](docs/screenshots/party-mode.png) |
-
-| Recorder (Русский) | Settings (Русский) |
-| :---: | :---: |
-| ![Recorder in Russian](docs/screenshots/recorder-ru.png) | ![Settings in Russian](docs/screenshots/settings-ru.png) |
 
 ## ⬇️ Download
 
@@ -92,6 +90,12 @@ Grab the latest `MauseRecorder-win-x64.zip` from the [**Releases**](../../releas
 >
 > **Want different keys?** Open **Settings → Hotkeys**, click a shortcut and press your new combination (for example <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>K</kbd>). Press <kbd>Esc</kbd> to cancel. Changes apply instantly and are saved.
 
+### Window-bound takes
+
+Each take remembers the window you were recording in. On replay, MauseRecorder brings that window back to the foreground and scales the recorded coordinates to its current position and size — so a take still lands correctly if the window was moved or resized. If the app is no longer open, the take simply plays at the original screen coordinates.
+
+> The target window is captured from the first real mouse event in your take, so you can start recording and then switch to the app you want to record. Interactions with MauseRecorder's own window are always ignored.
+
 ## 🔒 Your data
 
 Everything stays on your machine — there is no telemetry, no network calls, no accounts.
@@ -113,6 +117,10 @@ Everything stays on your machine — there is no telemetry, no network calls, no
   "createdAt": "2026-10-21T18:25:00",
   "durationMs": 5120,
   "screenLeft": 0, "screenTop": 0, "screenWidth": 1920, "screenHeight": 1080,
+  "targetWindowTitle": "Landing page - Chrome",
+  "targetProcessName": "chrome",
+  "targetWindowLeft": 120, "targetWindowTop": 80,
+  "targetWindowWidth": 1400, "targetWindowHeight": 900,
   "events": [
     { "time": 0.0, "x": 812, "y": 540, "type": "Move" },
     { "time": 42.5, "x": 900, "y": 512, "type": "LeftDown" },
@@ -147,10 +155,10 @@ The self-contained `.exe` lands in `bin\Release\net10.0-windows\win-x64\publish\
 | :--- | :--- |
 | `Services/MouseHook.cs` | Low-level `WH_MOUSE_LL` global hook |
 | `Services/RecorderService.cs` | Turns raw hook events into a `Recording` (ignores injected input & the app's own window) |
-| `Services/PlaybackService.cs` | Replays a take with `SendInput` on absolute virtual-desktop coordinates |
+| `Services/PlaybackService.cs` | Replays a take with `SendInput` on a dedicated high-priority thread |
+| `Services/WindowBinder.cs` | Captures the target window and brings it back for replay |
 | `Services/StorageService.cs` | Atomic JSON persistence in `%APPDATA%` |
 | `Controls/TimelineControl.cs` | Custom waveform + click-marker renderer |
-| `Controls/HeatmapControl.cs` | Custom click-heatmap renderer |
 | `Themes/DarkTheme.xaml` | Every dark style, control template and accent resource |
 
 Two details worth calling out:
@@ -162,7 +170,7 @@ Two details worth calling out:
 
 ```
 MauseRecorder/
-├─ Controls/     # custom timeline & heatmap renderers
+├─ Controls/     # custom timeline renderer
 ├─ Interop/      # P/Invoke declarations
 ├─ Models/       # Recording, MouseEvent, AppSettings
 ├─ Services/     # hook, recorder, playback, storage, sounds, themes
@@ -191,11 +199,11 @@ Pull requests are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md). Ideas, bug
 **MauseRecorder** — красивый портативный рекордер мыши для Windows. Пишет клики, перетаскивания и прокрутку, а потом воспроизводит их с точностью до кадра.
 
 - 🎬 Запись движений, кликов (левая / правая / средняя / боковые) и прокрутки
-- ⚡ Воспроизведение со скоростью от 0.25× до 5× и режимом повтора
+- ⚡ Плавное воспроизведение с точными задержками, скоростью от 0.25× до 5× и режимом повтора
+- 🪟 Привязка к окну: дубль запоминает приложение, выводит его вперёд при повторе и пересчитывает координаты, если окно сдвинули или изменили размер
 - 🎨 Четыре акцентных темы: фиолетовая, голубая, лайм и закат
-- 📈 Живой таймлайн движений и 🗺️ тепловая карта кликов
-- 🖼️ Экспорт статистики в PNG-карточку
-- 🎉 Режим вечеринки (конфетти), 👹 режим гремлина, 🏆 достижения и 😏 «прожарка» курсора
+- 📈 Живой таймлайн движений
+- 🎉 Режим вечеринки (конфетти), 👹 режим гремлина и 🏆 достижения
 - 🌍 Два языка интерфейса — **English** и **Русский**; переключаются в настройках без перезапуска
 - ⌨️ Глобальные горячие клавиши: по умолчанию <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>R</kbd> — запись, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>P</kbd> — повтор, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>H</kbd> — окно. Любую комбинацию можно переназначить в **Настройки → Горячие клавиши**
 - 🔒 Всё локально: `%APPDATA%\MauseRecorder`, без телеметрии и без сети
