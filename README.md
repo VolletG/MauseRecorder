@@ -10,7 +10,7 @@ Capture every click, drag and scroll — then replay them frame-perfect. 🖱️
 [![Platform](https://img.shields.io/badge/platform-Windows%2010%20%2F%2011-0078D6?logo=windows&logoColor=white)](#-download)
 [![.NET](https://img.shields.io/badge/.NET-10-512BD4?logo=dotnet&logoColor=white)](#-build-from-source)
 [![License](https://img.shields.io/badge/license-MIT-8B5CF6)](LICENSE)
-[![Made of clicks](https://img.shields.io/badge/made%20of-clicks-22D3EE)](#)
+[![Made of VolletG](https://img.shields.io/badge/made%20of-VolletG-22D3EE)](#)
 
 </div>
 
