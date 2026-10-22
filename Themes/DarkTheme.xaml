@@ -337,6 +337,41 @@
         </Setter>
     </Style>
 
+    <!-- ═══════════════════════════ Hotkey key-cap button ═══════════════════════════ -->
+    <Style x:Key="KeyCapButton" TargetType="Button">
+        <Setter Property="Background" Value="#151922" />
+        <Setter Property="BorderBrush" Value="#2B3140" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Foreground" Value="#C9CFDB" />
+        <Setter Property="Padding" Value="11,5" />
+        <Setter Property="FontSize" Value="10.5" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Cap" Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="6" Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Cap" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Cap" Property="Background" Value="{DynamicResource AccentFaintBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Cap" Property="Opacity" Value="0.5" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <!-- ═══════════════════════════ Toggle switch ═══════════════════════════ -->
     <Style x:Key="Switch" TargetType="CheckBox">
         <Setter Property="Width" Value="44" />

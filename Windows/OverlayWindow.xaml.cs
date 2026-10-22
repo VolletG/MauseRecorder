@@ -11,10 +11,11 @@ public partial class OverlayWindow : Window
 
     public event EventHandler? StopRequested;
 
-    public OverlayWindow(RecorderService recorder)
+    public OverlayWindow(RecorderService recorder, string stopHotkey)
     {
         _recorder = recorder;
         InitializeComponent();
+        StopButton.ToolTip = LocalizationService.F("S_Stop_recording_hotkey", stopHotkey);
         _timer = new DispatcherTimer(TimeSpan.FromMilliseconds(80), DispatcherPriority.Background, (_, _) => Tick(), Dispatcher);
         Loaded += OnLoaded;
         Closed += (_, _) => _timer.Stop();
@@ -35,7 +36,7 @@ public partial class OverlayWindow : Window
         TimerText.Text = elapsed.TotalHours >= 1
             ? $"{(int)elapsed.TotalHours}:{elapsed.Minutes:00}:{elapsed.Seconds:00}"
             : $"{elapsed.Minutes:00}:{elapsed.Seconds:00}";
-        EventsText.Text = $"{_recorder.EventCount:N0} events · {_recorder.ClickCount} clicks";
+        EventsText.Text = LocalizationService.F("S_Overlay_stats", _recorder.EventCount, _recorder.ClickCount);
     }
 
     private void Stop_Click(object sender, RoutedEventArgs e)

@@ -38,7 +38,7 @@
                             <ScaleTransform ScaleX="1" ScaleY="1" />
                         </TextBlock.RenderTransform>
                     </TextBlock>
-                    <TextBlock Text="GET READY" Style="{StaticResource Eyebrow}" HorizontalAlignment="Center"
+                    <TextBlock Text="{DynamicResource S_GET_READY}" Style="{StaticResource Eyebrow}" HorizontalAlignment="Center"
                                Margin="0,2,0,0" />
                 </StackPanel>
             </Grid>
@@ -47,11 +47,11 @@
                     Padding="16,8" HorizontalAlignment="Center" Margin="0,18,0,0">
                 <StackPanel Orientation="Horizontal">
                     <Ellipse Width="6" Height="6" Fill="#FF4D5E" VerticalAlignment="Center" Margin="0,0,8,0" />
-                    <TextBlock Text="Recording starts in a moment" Style="{StaticResource Caption}"
+                    <TextBlock Text="{DynamicResource S_Recording_starts_in_a_moment}" Style="{StaticResource Caption}"
                                Foreground="#C9CEDA" FontSize="11.5" />
                 </StackPanel>
             </Border>
-            <TextBlock Text="Ctrl + Alt + R to cancel" Style="{StaticResource Caption}" FontSize="10.5"
+            <TextBlock x:Name="CancelHint" Text="Ctrl + Alt + R to cancel" Style="{StaticResource Caption}" FontSize="10.5"
                        HorizontalAlignment="Center" Margin="0,12,0,0" Foreground="#5A6172" />
         </StackPanel>
     </Grid>

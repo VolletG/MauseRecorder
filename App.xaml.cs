@@ -15,6 +15,7 @@ public partial class App : Application
 
         Storage = new StorageService();
         Settings = Storage.LoadSettings();
+        LocalizationService.Apply(Settings.Language);
         ThemeManager.ApplyAccent(Settings.Accent);
 
         DispatcherUnhandledException += (_, args) =>
@@ -31,7 +32,7 @@ public partial class App : Application
             }
 
             MessageBox.Show(
-                "Something went sideways:\n\n" + args.Exception.Message,
+                LocalizationService.T("S_Crash") + "\n\n" + args.Exception.Message,
                 "MauseRecorder",
                 MessageBoxButton.OK,
                 MessageBoxImage.Error);

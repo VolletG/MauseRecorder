@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Input;
+using MauseRecorder.Services;
 
 namespace MauseRecorder.Windows;
 
@@ -24,7 +25,7 @@ public partial class DialogWindow : Window
 
     public string InputText => InputBox.Text.Trim();
 
-    public static string? Prompt(Window owner, string title, string message, string initialValue = "", string confirmText = "Save")
+    public static string? Prompt(Window owner, string title, string message, string initialValue = "", string confirmText = "")
     {
         var dialog = new DialogWindow { Owner = owner };
         dialog.TitleText.Text = title;
@@ -32,16 +33,16 @@ public partial class DialogWindow : Window
         dialog.InputLabel.Visibility = Visibility.Visible;
         dialog.InputBox.Visibility = Visibility.Visible;
         dialog.InputBox.Text = initialValue;
-        dialog.ConfirmButton.Content = confirmText;
+        dialog.ConfirmButton.Content = string.IsNullOrEmpty(confirmText) ? LocalizationService.T("S_Save") : confirmText;
         return dialog.ShowDialog() == true ? dialog.InputText : null;
     }
 
-    public static bool Confirm(Window owner, string title, string message, string confirmText = "Confirm", bool danger = false)
+    public static bool Confirm(Window owner, string title, string message, string confirmText = "", bool danger = false)
     {
         var dialog = new DialogWindow { Owner = owner };
         dialog.TitleText.Text = title;
         dialog.MessageText.Text = message;
-        dialog.ConfirmButton.Content = confirmText;
+        dialog.ConfirmButton.Content = string.IsNullOrEmpty(confirmText) ? LocalizationService.T("S_Confirm") : confirmText;
         dialog.InputLabel.Visibility = Visibility.Collapsed;
         dialog.InputBox.Visibility = Visibility.Collapsed;
         if (danger)

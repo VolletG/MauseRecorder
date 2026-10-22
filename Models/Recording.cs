@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using MauseRecorder.Services;
 
 namespace MauseRecorder.Models;
 
@@ -74,11 +75,15 @@ public sealed class Recording
         get
         {
             var span = TimeSpan.FromMilliseconds(DurationMs);
+            var russian = LocalizationService.Language == LocalizationService.Russian;
+            var hour = russian ? "ч" : "h";
+            var minute = russian ? "м" : "m";
+            var second = russian ? "с" : "s";
             return span.TotalHours >= 1
-                ? $"{(int)span.TotalHours}h {span.Minutes}m"
+                ? $"{(int)span.TotalHours}{hour} {span.Minutes}{minute}"
                 : span.TotalMinutes >= 1
-                    ? $"{(int)span.TotalMinutes}m {span.Seconds}s"
-                    : $"{Math.Max(1, (int)Math.Round(span.TotalSeconds))}s";
+                    ? $"{(int)span.TotalMinutes}{minute} {span.Seconds}{second}"
+                    : $"{Math.Max(1, (int)Math.Round(span.TotalSeconds))}{second}";
         }
     }
 
@@ -89,16 +94,18 @@ public sealed class Recording
         {
             var today = DateTime.Today;
             if (CreatedAt.Date == today)
-                return $"Today · {CreatedAt:HH:mm}";
+                return $"{LocalizationService.T("S_Today")} · {CreatedAt:HH:mm}";
             if (CreatedAt.Date == today.AddDays(-1))
-                return $"Yesterday · {CreatedAt:HH:mm}";
-            return CreatedAt.ToString("MMM d · HH:mm");
+                return $"{LocalizationService.T("S_Yesterday")} · {CreatedAt:HH:mm}";
+            return LocalizationService.Language == LocalizationService.Russian
+                ? CreatedAt.ToString("dd.MM · HH:mm")
+                : CreatedAt.ToString("MMM d · HH:mm");
         }
     }
 
     [JsonIgnore]
-    public string Summary => $"{ClickCount} clicks · {MoveCount} moves · {ScrollCount} scrolls";
+    public string Summary => $"{ClickCount} {LocalizationService.Plural("S_click", ClickCount)} · {MoveCount} {LocalizationService.Plural("S_move", MoveCount)} · {ScrollCount} {LocalizationService.Plural("S_scroll", ScrollCount)}";
 
     [JsonIgnore]
-    public string ClickLabel => ClickCount == 1 ? "1 click" : $"{ClickCount} clicks";
+    public string ClickLabel => $"{ClickCount} {LocalizationService.Plural("S_click", ClickCount)}";
 }

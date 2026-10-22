@@ -49,7 +49,7 @@ public static class DemoRecordingFactory
         return new Recording
         {
             Id = "demo-heart",
-            Name = "Demo · Heart of a clicker",
+            Name = LocalizationService.T("S_Demo_name"),
             CreatedAt = DateTime.Now,
             DurationMs = duration + 600,
             ScreenLeft = screen.Left,

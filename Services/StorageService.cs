@@ -131,7 +131,10 @@ public sealed class StorageService
 
     public string NextTakeName(int savedCount)
     {
-        return $"Take {savedCount + 1:00} · {DateTime.Now:MMM d, HH:mm}";
+        var stamp = LocalizationService.Language == LocalizationService.Russian
+            ? DateTime.Now.ToString("dd.MM, HH:mm")
+            : DateTime.Now.ToString("MMM d, HH:mm");
+        return $"{LocalizationService.T("S_Take")} {savedCount + 1:00} · {stamp}";
     }
 
     private static void WriteAtomic(string path, string contents)

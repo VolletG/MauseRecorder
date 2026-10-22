@@ -3,16 +3,20 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using MauseRecorder.Interop;
+using MauseRecorder.Services;
 
 namespace MauseRecorder.Windows;
 
 public partial class CountdownWindow : Window
 {
+    public string CancelHotkey { get; set; } = "Ctrl + Alt + R";
+
     public CountdownWindow()
     {
         InitializeComponent();
         Loaded += (_, _) =>
         {
+            CancelHint.Text = LocalizationService.F("S_Cancel_hint", CancelHotkey);
             var area = SystemParameters.WorkArea;
             Left = area.Left + (area.Width - Width) / 2;
             Top = area.Top + (area.Height - Height) / 2;

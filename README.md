@@ -44,7 +44,8 @@ MauseRecorder is a tiny Windows studio for recording and replaying your mouse. P
 - 🔊 Optional click sounds, plus a floating recording HUD
 
 **Quality of life**
-- ⌨️ Global hotkeys that work from any app
+- ⌨️ Global hotkeys that work from any app — and you can rebind them
+- 🌍 English and Русский, switchable in Settings without a restart
 - 📦 Single portable `.exe`, no installer, no admin rights
 - 💾 Recordings are small human-readable `.mrec` (JSON) files
 
@@ -61,6 +62,10 @@ MauseRecorder is a tiny Windows studio for recording and replaying your mouse. P
 | Accent themes | Party mode 🎉 |
 | :---: | :---: |
 | ![Accent themes](docs/screenshots/accent-cyan.png) | ![Party mode](docs/screenshots/party-mode.png) |
+
+| Recorder (Русский) | Settings (Русский) |
+| :---: | :---: |
+| ![Recorder in Russian](docs/screenshots/recorder-ru.png) | ![Settings in Russian](docs/screenshots/settings-ru.png) |
 
 ## ⬇️ Download
 
@@ -84,6 +89,8 @@ Grab the latest `MauseRecorder-win-x64.zip` from the [**Releases**](../../releas
 | <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>H</kbd> | Show / hide the window |
 
 > Hotkeys are registered globally. If another app already owns them, MauseRecorder shows a friendly toast and the on-screen buttons keep working.
+>
+> **Want different keys?** Open **Settings → Hotkeys**, click a shortcut and press your new combination (for example <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>K</kbd>). Press <kbd>Esc</kbd> to cancel. Changes apply instantly and are saved.
 
 ## 🔒 Your data
 
@@ -189,7 +196,8 @@ Pull requests are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md). Ideas, bug
 - 📈 Живой таймлайн движений и 🗺️ тепловая карта кликов
 - 🖼️ Экспорт статистики в PNG-карточку
 - 🎉 Режим вечеринки (конфетти), 👹 режим гремлина, 🏆 достижения и 😏 «прожарка» курсора
-- ⌨️ Глобальные горячие клавиши: <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>R</kbd> — запись, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>P</kbd> — повтор, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>H</kbd> — окно
+- 🌍 Два языка интерфейса — **English** и **Русский**; переключаются в настройках без перезапуска
+- ⌨️ Глобальные горячие клавиши: по умолчанию <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>R</kbd> — запись, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>P</kbd> — повтор, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>H</kbd> — окно. Любую комбинацию можно переназначить в **Настройки → Горячие клавиши**
 - 🔒 Всё локально: `%APPDATA%\MauseRecorder`, без телеметрии и без сети
 
 **Установка:** скачайте `MauseRecorder-win-x64.zip` из раздела [Releases](../../releases), распакуйте и запустите `MauseRecorder.exe`. Установка не нужна — .NET внутри.

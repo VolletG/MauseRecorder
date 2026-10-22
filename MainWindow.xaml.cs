@@ -30,6 +30,10 @@ public partial class MainWindow : Window
     private const int HotkeyPlay = 0xA002;
     private const int HotkeyShow = 0xA003;
 
+    private static string T(string key) => LocalizationService.T(key);
+    private static string F(string key, params object[] args) => LocalizationService.F(key, args);
+    private static string P(string prefix, int count) => LocalizationService.Plural(prefix, count);
+
     private readonly StorageService _storage;
     private readonly ObservableCollection<Recording> _recordings = [];
     private readonly ICollectionView _archiveView;
@@ -53,6 +57,10 @@ public partial class MainWindow : Window
     private bool _hotkeyPlayRegistered;
     private bool _hotkeyShowRegistered;
     private string? _hotkeyWarning;
+    private Hotkey _hotkeyRecord = Hotkey.DefaultRecord;
+    private Hotkey _hotkeyPlay = Hotkey.DefaultPlay;
+    private Hotkey _hotkeyShow = Hotkey.DefaultShow;
+    private string? _capturingHotkey;
     private bool _isPlaying;
     private bool _loadingUi = true;
     private bool _minimizedForRecord;
@@ -67,6 +75,7 @@ public partial class MainWindow : Window
         _settings.Normalize();
 
         InitializeComponent();
+        PreviewKeyDown += MainWindow_PreviewKeyDown;
 
         _archiveView = CollectionViewSource.GetDefaultView(_recordings);
         _archiveView.Filter = FilterRecording;
@@ -97,7 +106,7 @@ public partial class MainWindow : Window
         DataPathText.Text = _storage.RootDirectory;
         UpdateHeatmap();
         UpdateArchiveSummary();
-        SetStatusReady("Waiting for a take");
+        SetStatusReady(T("S_Waiting_for_a_take"));
 
         Loaded += MainWindow_Loaded;
     }
@@ -114,7 +123,7 @@ public partial class MainWindow : Window
 
         if (_hotkeyWarning is not null)
         {
-            Dispatcher.BeginInvoke(new Action(() => ShowToast("Hotkey unavailable", _hotkeyWarning, "!", true)),
+            Dispatcher.BeginInvoke(new Action(() => ShowToast(T("S_Hotkey_unavailable"), _hotkeyWarning, "!", true)),
                 DispatcherPriority.ApplicationIdle);
         }
     }
@@ -276,7 +285,7 @@ public partial class MainWindow : Window
             if (_isPlaying)
             {
                 StopPlayback();
-                ShowToast("Replay stopped", "Now you can start a fresh take.", "■");
+                ShowToast(T("S_Replay_stopped"), T("S_Replay_stopped_body"), "■");
                 return;
             }
 
@@ -290,7 +299,7 @@ public partial class MainWindow : Window
         }
         catch (Exception ex)
         {
-            ShowToast("Could not record", ex.Message, "!", true);
+            ShowToast(T("S_Could_not_record"), ex.Message, "!", true);
         }
     }
 
@@ -306,7 +315,7 @@ public partial class MainWindow : Window
         {
             var cts = new CancellationTokenSource();
             _countdownCts = cts;
-            _countdown = new CountdownWindow();
+            _countdown = new CountdownWindow { CancelHotkey = _hotkeyRecord.Format() };
             _countdown.Show();
             var cancelled = false;
 
@@ -321,7 +330,7 @@ public partial class MainWindow : Window
             catch (Exception ex)
             {
                 cancelled = true;
-                ShowToast("Countdown failed", ex.Message, "!", true);
+                ShowToast(T("S_Countdown_failed"), ex.Message, "!", true);
             }
             finally
             {
@@ -333,7 +342,7 @@ public partial class MainWindow : Window
             if (cancelled)
             {
                 RestoreAfterRecording();
-                ShowToast("Countdown cancelled", "No clicks were harmed.", "×");
+                ShowToast(T("S_Countdown_cancelled"), T("S_Countdown_cancelled_body"), "×");
                 return;
             }
         }
@@ -347,14 +356,14 @@ public partial class MainWindow : Window
         catch (Exception ex)
         {
             RestoreAfterRecording();
-            ShowToast("Could not start", ex.Message, "!", true);
+            ShowToast(T("S_Could_not_start"), ex.Message, "!", true);
             return;
         }
 
         var screen = ScreenMetrics.VirtualScreen();
         _liveRecording = new Recording
         {
-            Name = "Live take",
+            Name = T("S_Live_take"),
             CreatedAt = DateTime.Now,
             DurationMs = 1,
             ScreenLeft = screen.Left,
@@ -367,8 +376,8 @@ public partial class MainWindow : Window
         Timeline.IsLive = true;
         Timeline.Recording = _liveRecording;
         Timeline.Progress = 1;
-        TimelineTakeName.Text = "Recording live · you're on";
-        TimelineEventCount.Text = "0 events";
+        TimelineTakeName.Text = F("S_Recording_live", T("S_Youre_on"));
+        TimelineEventCount.Text = T("S_0_events");
         StatEvents.Text = "0";
         StatDuration.Text = "00:00";
         StatClicks.Text = "0";
@@ -377,7 +386,7 @@ public partial class MainWindow : Window
 
         if (_settings.ShowRecordingHud)
         {
-            _overlay = new OverlayWindow(_recorder);
+            _overlay = new OverlayWindow(_recorder, _hotkeyRecord.Format());
             _overlay.StopRequested += Overlay_StopRequested;
             _overlay.Show();
         }
@@ -400,8 +409,8 @@ public partial class MainWindow : Window
             Timeline.IsLive = false;
             Timeline.Progress = 0;
             RestoreAfterRecording();
-            ShowToast("Nothing captured", "The mouse was suspiciously quiet. Try a little longer.", "·");
-            SetStatusReady("Waiting for a take");
+            ShowToast(T("S_Nothing_captured"), T("S_Nothing_captured_body"), "·");
+            SetStatusReady(T("S_Waiting_for_a_take"));
             return;
         }
 
@@ -416,25 +425,25 @@ public partial class MainWindow : Window
         UpdateHeatmap();
         UpdateArchiveSummary();
         RestoreAfterRecording();
-        SetStatusReady("Last take · " + recording.Name);
-        ShowToast("Take saved", BuildTakeSummary(recording), "✓");
+        SetStatusReady(F("S_Last_take", recording.Name));
+        ShowToast(T("S_Take_saved"), BuildTakeSummary(recording), "✓");
     }
 
     private void SetRecordingUi(bool recording)
     {
-        RecordButtonText.Text = recording ? "Stop recording" : "Start recording";
+        RecordButtonText.Text = recording ? T("S_Stop_recording") : T("S_Start_recording");
         HeroPlayButton.IsEnabled = !recording;
         TimelinePlayButton.IsEnabled = !recording;
 
         if (recording)
         {
-            SetStatus("RECORDING", Brush("DangerBrush"), "00:00 · 0 events", true);
+            SetStatus(T("S_RECORDING"), Brush("DangerBrush"), $"00:00 · 0 {T("S_events")}", true);
         }
         else
         {
             Timeline.IsLive = false;
             Timeline.Progress = 0;
-            if (!_isPlaying) SetStatusReady("Ready for another take");
+            if (!_isPlaying) SetStatusReady(T("S_Ready_for_another_take"));
         }
     }
 
@@ -449,9 +458,9 @@ public partial class MainWindow : Window
         StatEvents.Text = events.ToString("N0");
         StatClicks.Text = clicks.ToString("N0");
         StatDuration.Text = FormatDuration(elapsed);
-        TimelineEventCount.Text = $"{events:N0} events";
-        TimelineTakeName.Text = $"Recording live · {FormatDuration(elapsed)}";
-        StatusDetail.Text = $"{FormatDuration(elapsed)} · {events:N0} events";
+        TimelineEventCount.Text = F("S_EventsCount", events);
+        TimelineTakeName.Text = F("S_Recording_live", FormatDuration(elapsed));
+        StatusDetail.Text = $"{FormatDuration(elapsed)} · {events:N0} {T("S_events")}";
 
         if (_liveRecording is not null)
         {
@@ -475,9 +484,9 @@ public partial class MainWindow : Window
             StatEvents.Text = "0";
             StatDuration.Text = "00:00";
             StatClicks.Text = "0";
-            TimelineTakeName.Text = "Nothing recorded yet";
-            TimelineEventCount.Text = "0 events";
-            HeroPlayButton.ToolTip = "Play the last take";
+            TimelineTakeName.Text = T("S_Nothing_recorded_yet");
+            TimelineEventCount.Text = T("S_0_events");
+            HeroPlayButton.ToolTip = T("S_Play_last_take");
             return;
         }
 
@@ -485,8 +494,8 @@ public partial class MainWindow : Window
         StatDuration.Text = FormatDuration(recording.DurationMs);
         StatClicks.Text = recording.ClickCount.ToString("N0");
         TimelineTakeName.Text = $"{recording.Name} · {recording.CreatedLabel}";
-        TimelineEventCount.Text = $"{recording.Events.Count:N0} events";
-        HeroPlayButton.ToolTip = "Play " + recording.Name;
+        TimelineEventCount.Text = F("S_EventsCount", recording.Events.Count);
+        HeroPlayButton.ToolTip = F("S_Play_named", recording.Name);
     }
 
     private void RestoreAfterRecording()
@@ -528,13 +537,13 @@ public partial class MainWindow : Window
 
         if (_recorder.IsRecording)
         {
-            ShowToast("Still recording", "Stop the take before summoning the demo.", "·");
+            ShowToast(T("S_Still_recording"), T("S_Still_recording_body"), "·");
             return;
         }
 
         var demo = DemoRecordingFactory.CreateHeartDemo();
         SetCurrentRecording(demo);
-        ShowToast("Demo mode", "A heart-shaped cursor path is about to happen.", "✦");
+        ShowToast(T("S_Demo_mode"), T("S_Demo_heart"), "✦");
         await StartPlaybackAsync(demo);
     }
 
@@ -544,7 +553,7 @@ public partial class MainWindow : Window
 
         if (_recorder.IsRecording)
         {
-            ShowToast("Recording in progress", "Stop the take first, then hit replay.", "·");
+            ShowToast(T("S_Recording_in_progress"), T("S_Recording_in_progress_body"), "·");
             return;
         }
 
@@ -564,7 +573,7 @@ public partial class MainWindow : Window
         {
             var demo = DemoRecordingFactory.CreateHeartDemo();
             SetCurrentRecording(demo);
-            ShowToast("Demo mode", "No takes yet, so here's a heart-shaped cursor path.", "✦");
+            ShowToast(T("S_Demo_mode"), T("S_Demo_no_takes"), "✦");
             await StartPlaybackAsync(demo);
             return;
         }
@@ -606,7 +615,7 @@ public partial class MainWindow : Window
                 if (!_isPlaying) return;
                 Timeline.Progress = p.Fraction;
                 StatusDetail.Text = p.LoopNumber > 0
-                    ? $"{recording.Name} · loop {p.LoopNumber + 1}"
+                    ? $"{recording.Name} · {F("S_Loop_label", p.LoopNumber + 1)}"
                     : recording.Name;
             });
 
@@ -620,7 +629,7 @@ public partial class MainWindow : Window
         catch (Exception ex)
         {
             failed = true;
-            ShowToast("Playback hiccup", ex.Message, "!", true);
+            ShowToast(T("S_Playback_hiccup"), ex.Message, "!", true);
         }
         finally
         {
@@ -634,7 +643,7 @@ public partial class MainWindow : Window
             {
                 if (completed)
                 {
-                    ShowToast("That's a wrap", $"{recording.Name} · {FormatDuration(recording.DurationMs)} · {_settings.PlaybackSpeed:0.##}× speed", "✓");
+                    ShowToast(T("S_Thats_a_wrap"), $"{recording.Name} · {FormatDuration(recording.DurationMs)} · {_settings.PlaybackSpeed:0.##}× speed", "✓");
                     if (_settings.PartyMode)
                     {
                         _ = Dispatcher.BeginInvoke(new Action(PlayConfetti), DispatcherPriority.Background);
@@ -642,7 +651,7 @@ public partial class MainWindow : Window
                 }
                 else
                 {
-                    ShowToast("Replay stopped", "Your cursor is free.", "■");
+                    ShowToast(T("S_Replay_stopped"), T("S_Cursor_is_free"), "■");
                 }
             }
         }
@@ -652,20 +661,20 @@ public partial class MainWindow : Window
 
     private void SetPlaybackUi(bool playing)
     {
-        HeroPlayText.Text = playing ? "Stop replay" : "Play last take";
+        HeroPlayText.Text = playing ? T("S_Stop_replay") : T("S_Play_last_take");
         HeroPlayIcon.Text = playing ? "■" : "▶";
-        TimelinePlayText.Text = playing ? "Stop" : "Play take";
+        TimelinePlayText.Text = playing ? T("S_Stop") : T("S_Play_take");
         TimelinePlayIcon.Text = playing ? "■" : "▶";
 
         if (playing)
         {
             Timeline.Progress = 0;
-            SetStatus("PLAYING", Brush("AccentBrush"), _currentRecording?.Name ?? "Replay", true);
+            SetStatus(T("S_PLAYING"), Brush("AccentBrush"), _currentRecording?.Name ?? T("S_Replay"), true);
         }
         else
         {
             Timeline.Progress = 0;
-            SetStatusReady(_currentRecording is null ? "Waiting for a take" : "Last take · " + _currentRecording.Name);
+            SetStatusReady(_currentRecording is null ? T("S_Waiting_for_a_take") : F("S_Last_take", _currentRecording.Name));
         }
     }
 
@@ -702,7 +711,7 @@ public partial class MainWindow : Window
 
     private void SetStatusReady(string detail)
     {
-        SetStatus("READY", (Brush)FindResource("MutedBrush"), detail, false);
+        SetStatus(T("S_READY"), (Brush)FindResource("MutedBrush"), detail, false);
     }
 
     private void ShowToast(string title, string message, string glyph = "✓", bool error = false)
@@ -742,14 +751,14 @@ public partial class MainWindow : Window
     private string BuildTakeSummary(Recording recording)
     {
         var achievement = recording.ClickCount >= 200
-            ? "Achievement unlocked: Click Goblin."
+            ? T("S_Achievement_click_goblin")
             : recording.DurationMs >= 60_000
-                ? "Achievement unlocked: Marathon Mouse."
+                ? T("S_Achievement_marathon")
                 : recording.ScrollCount >= 20
-                    ? "Achievement unlocked: Scroll Lord."
-                    : "Achievement unlocked: Fresh Take.";
+                    ? T("S_Achievement_scroll_lord")
+                    : T("S_Achievement_fresh_take");
 
-        return $"{recording.DurationShort} · {recording.Events.Count:N0} events · {recording.ClickCount:N0} clicks. {achievement}";
+        return $"{recording.DurationShort} · {recording.Events.Count:N0} {T("S_events")} · {recording.ClickCount:N0} {P("S_click", recording.ClickCount)}. {achievement}";
     }
 
     // ═══════════════════════════════ Archive ═══════════════════════════════
@@ -790,8 +799,8 @@ public partial class MainWindow : Window
         ArchiveNavCount.Text = _recordings.Count.ToString();
         var clicks = _recordings.Sum(r => r.ClickCount);
         var totalMs = _recordings.Sum(r => r.DurationMs);
-        ArchiveSummary.Text = $"{_recordings.Count} take{(_recordings.Count == 1 ? "" : "s")} · {clicks:N0} clicks";
-        ArchiveTotalTime.Text = $"{FormatTotalDuration(totalMs)} recorded";
+        ArchiveSummary.Text = $"{_recordings.Count} {P("S_take", _recordings.Count)} · {clicks:N0} {P("S_click", clicks)}";
+        ArchiveTotalTime.Text = F("S_recorded", FormatTotalDuration(totalMs));
         UpdateArchiveEmptyState();
     }
 
@@ -808,10 +817,10 @@ public partial class MainWindow : Window
 
         ArchiveEmpty.Visibility = Visibility.Visible;
         var searching = !string.IsNullOrWhiteSpace(ArchiveSearch.Text);
-        ArchiveEmptyTitle.Text = searching ? "No takes match that" : "Your archive is a blank canvas";
+        ArchiveEmptyTitle.Text = searching ? T("S_No_takes_match_that") : T("S_Your_archive_is_a_blank_canvas");
         ArchiveEmptyText.Text = searching
-            ? "Try a different search — or make a brand new take."
-            : "Record a take and it will land here automatically. No cloud, no account, no nonsense.";
+            ? T("S_No_takes_match_body")
+            : T("S_Record_a_take_and_it_will_land_here_automaticall");
     }
 
     private async void RecordingsList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -828,7 +837,7 @@ public partial class MainWindow : Window
     {
         if (sender is not FrameworkElement { Tag: Recording recording }) return;
 
-        var name = DialogWindow.Prompt(this, "Rename take", "Give this masterpiece a name.", recording.Name, "Save name");
+        var name = DialogWindow.Prompt(this, T("S_Rename_take"), T("S_Rename_take_body"), recording.Name, T("S_Save_name"));
         if (string.IsNullOrWhiteSpace(name)) return;
 
         recording.Name = name.Trim();
@@ -846,15 +855,15 @@ public partial class MainWindow : Window
 
         _archiveView.Refresh();
         UpdateArchiveSummary();
-        ShowToast("Renamed", $"Now called “{recording.Name}”.", "✎");
+        ShowToast(T("S_Renamed"), F("S_Renamed_body", recording.Name), "✎");
     }
 
     private void DeleteRecording_Click(object sender, RoutedEventArgs e)
     {
         if (sender is not FrameworkElement { Tag: Recording recording }) return;
 
-        if (!DialogWindow.Confirm(this, "Delete this take?",
-                $"“{recording.Name}” will be removed from your archive. This cannot be undone.", "Delete take", true))
+        if (!DialogWindow.Confirm(this, T("S_Delete_this_take"),
+                F("S_Delete_take_body", recording.Name), T("S_Delete_take"), true))
             return;
 
         if (_isPlaying) StopPlayback();
@@ -872,25 +881,25 @@ public partial class MainWindow : Window
 
         UpdateArchiveSummary();
         UpdateHeatmap();
-        ShowToast("Take deleted", "A tiny funeral for a tiny take.", "✕");
+        ShowToast(T("S_Take_deleted"), T("S_Take_deleted_body"), "✕");
     }
 
     private void ClearArchive_Click(object sender, RoutedEventArgs e)
     {
         if (_recorder.IsRecording)
         {
-            ShowToast("Still recording", "Stop the take before clearing the archive.", "·");
+            ShowToast(T("S_Still_recording"), T("S_Still_recording_archive"), "·");
             return;
         }
 
         if (_recordings.Count == 0)
         {
-            ShowToast("Already clean", "There are no takes to delete.", "·");
+            ShowToast(T("S_Already_clean"), T("S_Already_clean_body"), "·");
             return;
         }
 
-        if (!DialogWindow.Confirm(this, "Burn the whole archive?",
-                $"All {_recordings.Count} takes will be permanently deleted from this computer.", "Delete everything", true))
+        if (!DialogWindow.Confirm(this, T("S_Burn_the_whole_archive"),
+                F("S_Burn_archive_body", _recordings.Count), T("S_Delete_everything"), true))
             return;
 
         if (_isPlaying) StopPlayback();
@@ -901,7 +910,7 @@ public partial class MainWindow : Window
         SetCurrentRecording(null);
         UpdateArchiveSummary();
         UpdateHeatmap();
-        ShowToast("Archive cleared", "Zero takes. Infinite possibilities.", "✓");
+        ShowToast(T("S_Archive_cleared"), T("S_Archive_cleared_body"), "✓");
     }
 
     private void OpenFolder_Click(object sender, RoutedEventArgs e) => _storage.OpenDataFolder();
@@ -921,9 +930,9 @@ public partial class MainWindow : Window
 
         HeatTotal.Text = clicks.Count.ToString("N0");
         HeatTakesLabel.Text = _recordings.Count == 0
-            ? "No data yet"
-            : $"across {_recordings.Count} take{(_recordings.Count == 1 ? "" : "s")}";
-        HeatTakeCount.Text = $"{_recordings.Count} take{(_recordings.Count == 1 ? "" : "s")}";
+            ? T("S_No_data_yet")
+            : F("S_across_takes", $"{_recordings.Count} {P("S_take", _recordings.Count)}");
+        HeatTakeCount.Text = $"{_recordings.Count} {P("S_take", _recordings.Count)}";
         HeatmapEmpty.Visibility = clicks.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
 
         if (clicks.Count == 0)
@@ -972,16 +981,16 @@ public partial class MainWindow : Window
         HeatLeftColumn.Width = new GridLength(Math.Max(0.01, leftRatio), GridUnitType.Star);
         HeatRightColumn.Width = new GridLength(Math.Max(0.01, rightRatio), GridUnitType.Star);
 
-        var horizontal = left >= right ? "Left" : "Right";
-        var vertical = top >= bottom ? "top" : "bottom";
+        var horizontal = left >= right ? T("S_Left") : T("S_Right");
+        var vertical = top >= bottom ? T("S_top") : T("S_bottom");
         HeatHotspot.Text = $"{horizontal} {vertical}";
 
         var favourite = new[]
         {
-            ("Left click", leftButtons),
-            ("Right click", rightButtons),
-            ("Middle click", middleButtons),
-            ("Side button", otherButtons)
+            (T("S_Left_click"), leftButtons),
+            (T("S_Right_click"), rightButtons),
+            (T("S_Middle_click"), middleButtons),
+            (T("S_Side_button"), otherButtons)
         }.OrderByDescending(item => item.Item2).First();
         HeatButton.Text = favourite.Item1;
 
@@ -1009,25 +1018,25 @@ public partial class MainWindow : Window
         var lines = new List<string>();
         if (clicks == 0)
         {
-            lines.Add("No clicks yet. Your cursor is still an innocent little arrow.");
-            lines.Add("Record a take and I'll have opinions about your mouse habits.");
-            lines.Add("A blank heatmap is just a canvas waiting for chaos.");
+            lines.Add(T("S_Roast_no_clicks"));
+            lines.Add(T("S_Roast_record"));
+            lines.Add(T("S_Roast_blank"));
             return lines[_random.Next(lines.Count)];
         }
 
-        if (clicks >= 500) lines.Add("Certified click goblin. Your mouse deserves dental insurance.");
-        else if (clicks >= 120) lines.Add("That's a lot of clicking. Blink once in a while, legend.");
-        if (right > left * 1.8) lines.Add("Right-click energy. You have opinions and a context menu.");
-        else if (left > right * 1.8) lines.Add("Left-click loyalist. Predictable, reliable, slightly feral.");
-        if (scrolls >= 30) lines.Add("You scroll like the answer is hiding at the bottom of the internet.");
-        if (moves > clicks * 40 && clicks > 0) lines.Add("So much movement, so few clicks. The cursor equivalent of pacing.");
-        if (totalMs > 5 * 60_000) lines.Add("Five minutes of raw mouse footage. Spielberg is calling.");
-        if (_recordings.Count >= 10) lines.Add("Ten takes in the archive? This isn't a habit anymore, it's a lifestyle.");
+        if (clicks >= 500) lines.Add(T("S_Roast_goblin"));
+        else if (clicks >= 120) lines.Add(T("S_Roast_lots"));
+        if (right > left * 1.8) lines.Add(T("S_Roast_right"));
+        else if (left > right * 1.8) lines.Add(T("S_Roast_left"));
+        if (scrolls >= 30) lines.Add(T("S_Roast_scroll"));
+        if (moves > clicks * 40 && clicks > 0) lines.Add(T("S_Roast_move"));
+        if (totalMs > 5 * 60_000) lines.Add(T("S_Roast_time"));
+        if (_recordings.Count >= 10) lines.Add(T("S_Roast_archive"));
 
-        lines.Add("Your cursor has range. Confusing, but impressive.");
-        lines.Add("Suspiciously intentional clicking. I respect it.");
-        lines.Add("The mouse is not the problem. The mouse is never the problem.");
-        lines.Add("This heatmap says 'productivity'. The timeline says 'side quests'.");
+        lines.Add(T("S_Roast_range"));
+        lines.Add(T("S_Roast_intentional"));
+        lines.Add(T("S_Roast_not_problem"));
+        lines.Add(T("S_Roast_heatmap"));
 
         return lines[_random.Next(lines.Count)];
     }
@@ -1044,21 +1053,21 @@ public partial class MainWindow : Window
             var clicks = _recordings.Sum(r => r.ClickCount);
             var totalMs = _recordings.Sum(r => r.DurationMs);
             var builder = new StringBuilder();
-            builder.AppendLine("MauseRecorder — all-time stats");
+            builder.AppendLine(T("S_Stats_header"));
             builder.AppendLine("────────────────────────────");
-            builder.AppendLine($"Takes:        {_recordings.Count}");
-            builder.AppendLine($"Clicks:       {clicks:N0}");
-            builder.AppendLine($"Recorded:     {FormatTotalDuration(totalMs)}");
-            builder.AppendLine($"Hot zone:     {HeatHotspot.Text}");
-            builder.AppendLine($"Favourite:    {HeatButton.Text}");
+            builder.AppendLine($"{T("S_Takes_colon")}        {_recordings.Count}");
+            builder.AppendLine($"{T("S_Clicks_colon")}       {clicks:N0}");
+            builder.AppendLine($"{T("S_Recorded_colon")}     {FormatTotalDuration(totalMs)}");
+            builder.AppendLine($"{T("S_Hot_zone_colon")}     {HeatHotspot.Text}");
+            builder.AppendLine($"{T("S_Favourite_colon")}    {HeatButton.Text}");
             builder.AppendLine();
-            builder.AppendLine("Made with MauseRecorder · mouse automation, but make it pretty.");
+            builder.AppendLine(T("S_Copy_footer"));
             Clipboard.SetText(builder.ToString());
-            ShowToast("Stats copied", "Your cursor résumé is on the clipboard.", "⧉");
+            ShowToast(T("S_Stats_copied"), T("S_Stats_copied_body"), "⧉");
         }
         catch (Exception ex)
         {
-            ShowToast("Clipboard said no", ex.Message, "!", true);
+            ShowToast(T("S_Clipboard_said_no"), ex.Message, "!", true);
         }
     }
 
@@ -1066,7 +1075,7 @@ public partial class MainWindow : Window
     {
         var dialog = new SaveFileDialog
         {
-            Title = "Export your heatmap card",
+            Title = T("S_Export_your_heatmap"),
             FileName = $"mauserecorder-heatmap-{DateTime.Now:yyyyMMdd}.png",
             Filter = "PNG image (*.png)|*.png",
             DefaultExt = ".png",
@@ -1083,7 +1092,7 @@ public partial class MainWindow : Window
             var height = ShareRoot.ActualHeight;
             if (width < 10 || height < 10)
             {
-                ShowToast("Export failed", "The heatmap is not laid out yet. Try again.", "!", true);
+                ShowToast(T("S_Export_failed"), T("S_Export_failed_body"), "!", true);
                 return;
             }
 
@@ -1101,11 +1110,11 @@ public partial class MainWindow : Window
             using var stream = File.Create(dialog.FileName);
             encoder.Save(stream);
 
-            ShowToast("Card exported", "Your heatmap is now a very shareable PNG.", "↓");
+            ShowToast(T("S_Card_exported"), T("S_Card_exported_body"), "↓");
         }
         catch (Exception ex)
         {
-            ShowToast("Export failed", ex.Message, "!", true);
+            ShowToast(T("S_Export_failed"), ex.Message, "!", true);
         }
     }
 
@@ -1137,6 +1146,13 @@ public partial class MainWindow : Window
             AccentCyan.IsChecked = _settings.Accent == "Cyan";
             AccentLime.IsChecked = _settings.Accent == "Lime";
             AccentSunset.IsChecked = _settings.Accent == "Sunset";
+
+            _hotkeyRecord = Hotkey.Parse(_settings.HotkeyRecord) ?? Hotkey.DefaultRecord;
+            _hotkeyPlay = Hotkey.Parse(_settings.HotkeyPlay) ?? Hotkey.DefaultPlay;
+            _hotkeyShow = Hotkey.Parse(_settings.HotkeyShow) ?? Hotkey.DefaultShow;
+            LangEnglish.IsChecked = LocalizationService.Language == LocalizationService.English;
+            LangRussian.IsChecked = LocalizationService.Language == LocalizationService.Russian;
+            UpdateHotkeyUi();
 
             ThemeManager.ApplyAccent(_settings.Accent);
             Timeline.InvalidateVisual();
@@ -1239,16 +1255,19 @@ public partial class MainWindow : Window
 
     private void ResetSettings_Click(object sender, RoutedEventArgs e)
     {
-        if (!DialogWindow.Confirm(this, "Reset everything?",
-                "Settings will return to their defaults. Your recordings stay exactly where they are.", "Reset settings"))
+        if (!DialogWindow.Confirm(this, T("S_Reset_everything"),
+                T("S_Reset_everything_body"), T("S_Reset_settings")))
             return;
 
         var last = _settings.LastRecordingId;
         _settings = new AppSettings { LastRecordingId = last };
+        LocalizationService.Apply(_settings.Language);
         ApplySettingsToUi();
         UpdateSpeedLabels();
         _storage.SaveSettings(_settings);
-        ShowToast("Settings reset", "Back to factory-fresh chaos.", "↻");
+        ReRegisterHotkeys();
+        RefreshLocalizedTexts();
+        ShowToast(T("S_Settings_reset"), T("S_Settings_reset_body"), "↻");
     }
 
     // ═══════════════════════════════ Misc ═══════════════════════════════
@@ -1265,7 +1284,7 @@ public partial class MainWindow : Window
         }
         catch (Exception ex)
         {
-            ShowToast("Could not open GitHub", ex.Message, "!", true);
+            ShowToast(T("S_Could_not_open_github"), ex.Message, "!", true);
         }
     }
 
@@ -1356,19 +1375,191 @@ public partial class MainWindow : Window
         if (_hwnd == IntPtr.Zero) return;
 
         _hotkeyRecordRegistered = NativeMethods.RegisterHotKey(_hwnd, HotkeyRecord,
-            NativeMethods.MOD_CONTROL | NativeMethods.MOD_ALT | NativeMethods.MOD_NOREPEAT, 0x52);
+            _hotkeyRecord.Modifiers | NativeMethods.MOD_NOREPEAT, _hotkeyRecord.VirtualKey);
         _hotkeyPlayRegistered = NativeMethods.RegisterHotKey(_hwnd, HotkeyPlay,
-            NativeMethods.MOD_CONTROL | NativeMethods.MOD_ALT | NativeMethods.MOD_NOREPEAT, 0x50);
+            _hotkeyPlay.Modifiers | NativeMethods.MOD_NOREPEAT, _hotkeyPlay.VirtualKey);
         _hotkeyShowRegistered = NativeMethods.RegisterHotKey(_hwnd, HotkeyShow,
-            NativeMethods.MOD_CONTROL | NativeMethods.MOD_ALT | NativeMethods.MOD_NOREPEAT, 0x48);
+            _hotkeyShow.Modifiers | NativeMethods.MOD_NOREPEAT, _hotkeyShow.VirtualKey);
 
         var failed = new List<string>();
-        if (!_hotkeyRecordRegistered) failed.Add("Ctrl+Alt+R");
-        if (!_hotkeyPlayRegistered) failed.Add("Ctrl+Alt+P");
-        if (!_hotkeyShowRegistered) failed.Add("Ctrl+Alt+H");
+        if (!_hotkeyRecordRegistered) failed.Add(_hotkeyRecord.Format());
+        if (!_hotkeyPlayRegistered) failed.Add(_hotkeyPlay.Format());
+        if (!_hotkeyShowRegistered) failed.Add(_hotkeyShow.Format());
 
-        if (failed.Count > 0)
-            _hotkeyWarning = $"{string.Join(", ", failed)} already taken by another app. The buttons still work.";
+        _hotkeyWarning = failed.Count == 0
+            ? null
+            : LocalizationService.F("S_Hotkey_taken", string.Join(", ", failed));
+    }
+
+    private void ReRegisterHotkeys()
+    {
+        UnregisterHotkeys();
+        RegisterHotkeys();
+        UpdateHotkeyUi();
+    }
+
+    private void UpdateHotkeyUi()
+    {
+        QuickStartHotkey.Text = _hotkeyRecord.Format();
+        TipHotkey.Text = _hotkeyRecord.Format();
+        HeaderHotkey.Text = _hotkeyRecord.Format();
+        HotkeyRecordText.Text = _hotkeyRecord.Format();
+        HotkeyPlayText.Text = _hotkeyPlay.Format();
+        HotkeyShowText.Text = _hotkeyShow.Format();
+        RecordButton.ToolTip = LocalizationService.F("S_Start_stop_recording_hotkey", _hotkeyRecord.Format());
+    }
+
+    private void HotkeyCapture_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not Button { Tag: string action }) return;
+
+        _capturingHotkey = action;
+        var target = action switch
+        {
+            "Record" => HotkeyRecordText,
+            "Play" => HotkeyPlayText,
+            _ => HotkeyShowText
+        };
+
+        target.Text = LocalizationService.T("S_Press_keys");
+        Activate();
+        Focus();
+        Keyboard.Focus(this);
+    }
+
+    private void MainWindow_PreviewKeyDown(object sender, KeyEventArgs e)
+    {
+        if (_capturingHotkey is null) return;
+        e.Handled = true;
+
+        if (e.Key == Key.Escape)
+        {
+            CancelHotkeyCapture();
+            return;
+        }
+
+        var key = e.Key == Key.System ? e.SystemKey : e.Key;
+        if (IsModifierKey(key) || key == Key.None) return;
+
+        var hotkey = Hotkey.FromKey(key, Keyboard.Modifiers);
+        if (!hotkey.IsValid)
+        {
+            ShowToast(LocalizationService.T("S_Add_a_modifier"),
+                LocalizationService.T("S_Add_a_modifier_body"), "!", true);
+            return;
+        }
+
+        if (IsHotkeyTaken(hotkey, _capturingHotkey))
+        {
+            ShowToast(LocalizationService.T("S_Hotkey_in_use"),
+                LocalizationService.T("S_Hotkey_in_use_body"), "!", true);
+            return;
+        }
+
+        switch (_capturingHotkey)
+        {
+            case "Record":
+                _hotkeyRecord = hotkey;
+                _settings.HotkeyRecord = hotkey.Format();
+                break;
+            case "Play":
+                _hotkeyPlay = hotkey;
+                _settings.HotkeyPlay = hotkey.Format();
+                break;
+            default:
+                _hotkeyShow = hotkey;
+                _settings.HotkeyShow = hotkey.Format();
+                break;
+        }
+
+        _capturingHotkey = null;
+        EnableHotkeyButtons();
+        _storage.SaveSettings(_settings);
+        ReRegisterHotkeys();
+
+        if (_hotkeyWarning is not null)
+            ShowToast(LocalizationService.T("S_Hotkey_unavailable"), _hotkeyWarning, "!", true);
+    }
+
+    private bool IsHotkeyTaken(Hotkey candidate, string action) => action switch
+    {
+        "Record" => candidate.Equals(_hotkeyPlay) || candidate.Equals(_hotkeyShow),
+        "Play" => candidate.Equals(_hotkeyRecord) || candidate.Equals(_hotkeyShow),
+        _ => candidate.Equals(_hotkeyRecord) || candidate.Equals(_hotkeyPlay)
+    };
+
+    private static bool IsModifierKey(Key key) =>
+        key is Key.LeftCtrl or Key.RightCtrl or Key.LeftAlt or Key.RightAlt
+            or Key.LeftShift or Key.RightShift or Key.LWin or Key.RWin;
+
+    private void CancelHotkeyCapture()
+    {
+        _capturingHotkey = null;
+        EnableHotkeyButtons();
+        UpdateHotkeyUi();
+    }
+
+    private void EnableHotkeyButtons()
+    {
+        HotkeyRecordButton.IsEnabled = true;
+        HotkeyPlayButton.IsEnabled = true;
+        HotkeyShowButton.IsEnabled = true;
+    }
+
+    private void Language_Checked(object sender, RoutedEventArgs e)
+    {
+        if (_loadingUi) return;
+        if (sender is not RadioButton { Tag: string language }) return;
+        if (language == LocalizationService.Language && language == _settings.Language) return;
+
+        _settings.Language = language;
+        LocalizationService.Apply(language);
+        _storage.SaveSettings(_settings);
+        UpdateHotkeyUi();
+        RefreshLocalizedTexts();
+    }
+
+    /// <summary>Re-applies every string that is written from code (not from XAML).</summary>
+    private void RefreshLocalizedTexts()
+    {
+        if (_isPlaying)
+        {
+            HeroPlayText.Text = LocalizationService.T("S_Stop_replay");
+            TimelinePlayText.Text = LocalizationService.T("S_Stop");
+            SetStatus(LocalizationService.T("S_PLAYING"), (Brush)FindResource("AccentBrush"),
+                _currentRecording?.Name ?? LocalizationService.T("S_Replay"), true);
+        }
+        else
+        {
+            HeroPlayText.Text = LocalizationService.T("S_Play_last_take");
+            TimelinePlayText.Text = LocalizationService.T("S_Play_take");
+
+            if (_liveRecording is not null)
+            {
+                SetStatus(LocalizationService.T("S_RECORDING"), (Brush)FindResource("DangerBrush"),
+                    $"{FormatDuration(_recorder.ElapsedMs)} · {_recorder.EventCount:N0} {LocalizationService.T("S_events")}", true);
+            }
+            else if (_currentRecording is null)
+            {
+                SetStatusReady(LocalizationService.T("S_Waiting_for_a_take"));
+            }
+            else
+            {
+                SetStatusReady(LocalizationService.F("S_Last_take", _currentRecording.Name));
+            }
+        }
+
+        RecordButtonText.Text = _liveRecording is not null
+            ? LocalizationService.T("S_Stop_recording")
+            : LocalizationService.T("S_Start_recording");
+
+        if (_liveRecording is null && !_isPlaying)
+            SetCurrentRecording(_currentRecording);
+
+        UpdateArchiveSummary();
+        UpdateHeatmap();
+        UpdateSpeedLabels();
+        DataPathText.Text = _storage.RootDirectory;
     }
 
     private void UnregisterHotkeys()

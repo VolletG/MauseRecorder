@@ -68,11 +68,11 @@
                               Fill="#08080B" Stretch="Uniform" Width="14" Height="15"
                               HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
-                    <TextBlock Text="MauseRecorder" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}"
+                    <TextBlock Text="{DynamicResource S_MauseRecorder}" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}"
                                VerticalAlignment="Center" Margin="9,0,0,0" />
                     <Border Background="#11141B" BorderBrush="#242A36" BorderThickness="1" CornerRadius="5"
                             Padding="5,2" Margin="8,1,0,0" VerticalAlignment="Center">
-                        <TextBlock Text="v1.0" FontSize="9" FontWeight="SemiBold" Foreground="{DynamicResource FaintBrush}" />
+                        <TextBlock Text="v1.1" FontSize="9" FontWeight="SemiBold" Foreground="{DynamicResource FaintBrush}" />
                     </Border>
                 </StackPanel>
 
@@ -80,20 +80,20 @@
                     <Border Background="#0F1218" BorderBrush="#222733" BorderThickness="1" CornerRadius="99" Padding="10,5">
                         <StackPanel Orientation="Horizontal">
                             <Ellipse x:Name="StatusDot" Width="6" Height="6" Fill="#697185" VerticalAlignment="Center" />
-                            <TextBlock x:Name="StatusText" Text="READY" FontSize="9.5" FontWeight="Bold"
+                            <TextBlock x:Name="StatusText" Text="{DynamicResource S_READY}" FontSize="9.5" FontWeight="Bold"
                                        Foreground="{DynamicResource MutedBrush}" Margin="7,0,0,0" />
                         </StackPanel>
                     </Border>
-                    <TextBlock x:Name="StatusDetail" Text="Waiting for a take" Style="{StaticResource Caption}"
+                    <TextBlock x:Name="StatusDetail" Text="{DynamicResource S_Waiting_for_a_take}" Style="{StaticResource Caption}"
                                FontSize="10.5" VerticalAlignment="Center" Margin="10,0,0,0" />
                 </StackPanel>
 
                 <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,6,0">
-                    <TextBlock Text="Ctrl + Alt + R" Style="{StaticResource Caption}" FontSize="10.5"
+                    <TextBlock x:Name="HeaderHotkey" Text="Ctrl + Alt + R" Style="{StaticResource Caption}" FontSize="10.5"
                                VerticalAlignment="Center" Margin="0,0,12,0" Foreground="#555D6E" />
-                    <Button Content="&#xE921;" Style="{StaticResource WindowButton}" Click="Minimize_Click" ToolTip="Minimize" />
-                    <Button x:Name="MaximizeButton" Content="&#xE922;" Style="{StaticResource WindowButton}" Click="Maximize_Click" ToolTip="Maximize" />
-                    <Button Content="&#xE8BB;" Style="{StaticResource CloseWindowButton}" Click="Close_Click" ToolTip="Close" />
+                    <Button Content="&#xE921;" Style="{StaticResource WindowButton}" Click="Minimize_Click" ToolTip="{DynamicResource S_Minimize}" />
+                    <Button x:Name="MaximizeButton" Content="&#xE922;" Style="{StaticResource WindowButton}" Click="Maximize_Click" ToolTip="{DynamicResource S_Maximize}" />
+                    <Button Content="&#xE8BB;" Style="{StaticResource CloseWindowButton}" Click="Close_Click" ToolTip="{DynamicResource S_Close}" />
                 </StackPanel>
             </Grid>
 
@@ -114,7 +114,7 @@
                         </Grid.RowDefinitions>
 
                         <StackPanel>
-                            <TextBlock Text="WORKSPACE" Style="{StaticResource Micro}" Margin="12,0,0,9" />
+                            <TextBlock Text="{DynamicResource S_WORKSPACE}" Style="{StaticResource Micro}" Margin="12,0,0,9" />
 
                             <RadioButton x:Name="NavRecorder" Style="{StaticResource NavButton}" GroupName="Nav"
                                          IsChecked="True" Tag="recorder" Checked="Nav_Checked">
@@ -129,7 +129,7 @@
                                                   StrokeThickness="1.7" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
                                         </Canvas>
                                     </Viewbox>
-                                    <TextBlock Text="Recorder" VerticalAlignment="Center" />
+                                    <TextBlock Text="{DynamicResource S_Recorder}" VerticalAlignment="Center" />
                                 </StackPanel>
                             </RadioButton>
 
@@ -143,7 +143,7 @@
                                                   StrokeThickness="1.7" StrokeStartLineCap="Round" />
                                         </Canvas>
                                     </Viewbox>
-                                    <TextBlock Text="Archive" VerticalAlignment="Center" />
+                                    <TextBlock Text="{DynamicResource S_Archive}" VerticalAlignment="Center" />
                                     <Border x:Name="ArchiveNavBadge" Background="#171B24" CornerRadius="99" Padding="7,2"
                                             Margin="8,0,0,0" VerticalAlignment="Center">
                                         <TextBlock x:Name="ArchiveNavCount" Text="0" FontSize="9.5" FontWeight="Bold"
@@ -162,7 +162,7 @@
                                                   StrokeThickness="1.7" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
                                         </Canvas>
                                     </Viewbox>
-                                    <TextBlock Text="Heatmap" VerticalAlignment="Center" />
+                                    <TextBlock Text="{DynamicResource S_Heatmap}" VerticalAlignment="Center" />
                                 </StackPanel>
                             </RadioButton>
 
@@ -179,7 +179,7 @@
                                                   StrokeThickness="1.7" StrokeStartLineCap="Round" />
                                         </Canvas>
                                     </Viewbox>
-                                    <TextBlock Text="Settings" VerticalAlignment="Center" />
+                                    <TextBlock Text="{DynamicResource S_Settings}" VerticalAlignment="Center" />
                                 </StackPanel>
                             </RadioButton>
 
@@ -188,20 +188,12 @@
                             <Border Background="{DynamicResource AccentFaintBrush}" BorderBrush="{DynamicResource AccentSoftBrush}"
                                     BorderThickness="1" CornerRadius="12" Padding="13,12">
                                 <StackPanel>
-                                    <TextBlock Text="QUICK START" Style="{StaticResource Micro}" Foreground="{DynamicResource AccentBrush}" />
-                                    <TextBlock Text="Hit record. Then click like nobody is watching." Style="{StaticResource Caption}"
+                                    <TextBlock Text="{DynamicResource S_QUICK_START}" Style="{StaticResource Micro}" Foreground="{DynamicResource AccentBrush}" />
+                                    <TextBlock Text="{DynamicResource S_Hit_record_Then_click_like_nobody_is_watching}" Style="{StaticResource Caption}"
                                                FontSize="11" Margin="0,5,0,0" TextWrapping="Wrap" LineHeight="16" />
-                                    <StackPanel Orientation="Horizontal" Margin="0,9,0,0">
-                                        <Border Style="{StaticResource KeyCap}">
-                                            <TextBlock Text="Ctrl" FontSize="9" Foreground="#A5ACBC" />
-                                        </Border>
-                                        <Border Style="{StaticResource KeyCap}">
-                                            <TextBlock Text="Alt" FontSize="9" Foreground="#A5ACBC" />
-                                        </Border>
-                                        <Border Style="{StaticResource KeyCap}">
-                                            <TextBlock Text="R" FontSize="9" Foreground="#A5ACBC" />
-                                        </Border>
-                                    </StackPanel>
+                                    <Border Style="{StaticResource KeyCap}" HorizontalAlignment="Left" Margin="0,9,0,0">
+                                        <TextBlock x:Name="QuickStartHotkey" Text="Ctrl + Alt + R" FontSize="9" Foreground="#A5ACBC" />
+                                    </Border>
                                 </StackPanel>
                             </Border>
                         </StackPanel>
@@ -211,10 +203,10 @@
                                     Click="StarGithub_Click">
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                     <TextBlock Text="★" Foreground="{DynamicResource AccentBrush}" FontSize="12" Margin="0,0,7,0" />
-                                    <TextBlock Text="Star on GitHub" FontSize="11.5" Foreground="{DynamicResource MutedBrush}" />
+                                    <TextBlock Text="{DynamicResource S_Star_on_GitHub_2}" FontSize="11.5" Foreground="{DynamicResource MutedBrush}" />
                                 </StackPanel>
                             </Button>
-                            <TextBlock Text="v1.0.0 · Windows 10/11" Style="{StaticResource Caption}" FontSize="9.5"
+                            <TextBlock Text="{DynamicResource S_v1_0_0_Windows_10_11}" Style="{StaticResource Caption}" FontSize="9.5"
                                        HorizontalAlignment="Center" Margin="0,8,0,0" Foreground="#414858" />
                         </StackPanel>
                     </Grid>
@@ -231,18 +223,18 @@
                         <StackPanel Margin="0,0,8,0">
                             <Grid>
                                 <StackPanel>
-                                    <TextBlock Text="Recorder" Style="{StaticResource H1}" FontSize="30" LineHeight="33" />
-                                    <TextBlock Text="Point. Click. Let it repeat." Style="{StaticResource Caption}" Margin="0,3,0,0" />
+                                    <TextBlock Text="{DynamicResource S_Recorder}" Style="{StaticResource H1}" FontSize="30" LineHeight="33" />
+                                    <TextBlock Text="{DynamicResource S_Point_Click_Let_it_repeat}" Style="{StaticResource Caption}" Margin="0,3,0,0" />
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                                     <Button Style="{StaticResource GhostButton}" Click="Demo_Click" Padding="14,9">
                                         <StackPanel Orientation="Horizontal">
                                             <TextBlock Text="✦" Foreground="{DynamicResource AccentBrush}" Margin="0,0,7,0" FontSize="11" />
-                                            <TextBlock Text="Watch demo" FontSize="12" />
+                                            <TextBlock Text="{DynamicResource S_Watch_demo}" FontSize="12" />
                                         </StackPanel>
                                     </Button>
                                     <Button Style="{StaticResource AccentQuietButton}" Click="OpenFolder_Click" Margin="8,0,0,0">
-                                        <TextBlock Text="Open folder" FontSize="12" />
+                                        <TextBlock Text="{DynamicResource S_Open_folder}" FontSize="12" />
                                     </Button>
                                 </StackPanel>
                             </Grid>
@@ -277,19 +269,19 @@
                                                     BorderThickness="1" CornerRadius="99" Padding="9,4" HorizontalAlignment="Left">
                                                 <StackPanel Orientation="Horizontal">
                                                     <Ellipse Width="5" Height="5" Fill="{DynamicResource AccentBrush}" VerticalAlignment="Center" />
-                                                    <TextBlock Text="MOUSE AUTOMATION STUDIO" Style="{StaticResource Micro}"
+                                                    <TextBlock Text="{DynamicResource S_MOUSE_AUTOMATION_STUDIO}" Style="{StaticResource Micro}"
                                                                Foreground="{DynamicResource AccentBrush}" FontSize="9" Margin="6,0,0,0" />
                                                 </StackPanel>
                                             </Border>
 
                                             <TextBlock Style="{StaticResource H1}" FontSize="38" LineHeight="41" Margin="0,12,0,0">
-                                                <Run Text="Record. Rewind." /><LineBreak />
-                                                <Run Text="Repeat." Foreground="{DynamicResource AccentBrush}" />
+                                                <Run Text="{DynamicResource S_Record_Rewind}" /><LineBreak />
+                                                <Run Text="{DynamicResource S_Repeat}" Foreground="{DynamicResource AccentBrush}" />
                                             </TextBlock>
 
                                             <TextBlock Style="{StaticResource Body}" MaxWidth="470" Margin="0,9,0,0" FontSize="12.5"
                                                        HorizontalAlignment="Left"
-                                                       Text="Every click, drag and scroll — captured and played back frame-perfect. Your mouse just became reusable." />
+                                                       Text="{DynamicResource S_Every_click_drag_and_scroll_captured_and_played}" />
 
                                             <StackPanel Orientation="Horizontal" Margin="0,18,0,0">
                                                 <Button x:Name="RecordButton" Style="{StaticResource PrimaryButton}"
@@ -299,7 +291,7 @@
                                                             <Ellipse Stroke="White" StrokeThickness="1.5" />
                                                             <Ellipse Width="5" Height="5" Fill="White" />
                                                         </Grid>
-                                                        <TextBlock x:Name="RecordButtonText" Text="Start recording" FontSize="12.5" />
+                                                        <TextBlock x:Name="RecordButtonText" Text="{DynamicResource S_Start_recording}" FontSize="12.5" />
                                                     </StackPanel>
                                                 </Button>
                                                 <Button x:Name="HeroPlayButton" Style="{StaticResource GhostButton}"
@@ -307,18 +299,18 @@
                                                     <StackPanel Orientation="Horizontal">
                                                         <TextBlock x:Name="HeroPlayIcon" Text="▶" FontSize="9" Foreground="{DynamicResource AccentBrush}"
                                                                    VerticalAlignment="Center" Margin="0,1,8,0" />
-                                                        <TextBlock x:Name="HeroPlayText" Text="Play last take" FontSize="12.5" />
+                                                        <TextBlock x:Name="HeroPlayText" Text="{DynamicResource S_Play_last_take}" FontSize="12.5" />
                                                     </StackPanel>
                                                 </Button>
                                             </StackPanel>
 
                                             <StackPanel Orientation="Horizontal" Margin="0,13,0,0">
-                                                <TextBlock Text="Tip" Style="{StaticResource Micro}" Foreground="{DynamicResource AccentBrush}"
+                                                <TextBlock Text="{DynamicResource S_Tip}" Style="{StaticResource Micro}" Foreground="{DynamicResource AccentBrush}"
                                                            VerticalAlignment="Center" Margin="0,0,7,0" />
-                                                <TextBlock Text="The app gets out of the way automatically. Stop anytime with" Style="{StaticResource Caption}"
+                                                <TextBlock Text="{DynamicResource S_The_app_gets_out_of_the_way_automatically_Stop_a}" Style="{StaticResource Caption}"
                                                            FontSize="10.5" VerticalAlignment="Center" />
                                                 <Border Style="{StaticResource KeyCap}" Margin="6,0,0,0">
-                                                    <TextBlock Text="Ctrl + Alt + R" FontSize="9" Foreground="#A5ACBC" />
+                                                    <TextBlock x:Name="TipHotkey" Text="Ctrl + Alt + R" FontSize="9" Foreground="#A5ACBC" />
                                                 </Border>
                                             </StackPanel>
                                         </StackPanel>
@@ -402,9 +394,9 @@
                                 <Border Grid.Column="0" Style="{StaticResource Card}" CornerRadius="14" Padding="16,13">
                                     <Grid>
                                         <StackPanel>
-                                            <TextBlock Text="EVENTS" Style="{StaticResource Micro}" />
+                                            <TextBlock Text="{DynamicResource S_EVENTS}" Style="{StaticResource Micro}" />
                                             <TextBlock x:Name="StatEvents" Text="0" Style="{StaticResource Metric}" FontSize="27" Margin="0,3,0,0" />
-                                            <TextBlock Text="captured moments" Style="{StaticResource Caption}" FontSize="10.5" />
+                                            <TextBlock Text="{DynamicResource S_captured_moments}" Style="{StaticResource Caption}" FontSize="10.5" />
                                         </StackPanel>
                                         <Border Width="32" Height="32" CornerRadius="10" Background="{DynamicResource AccentFaintBrush}"
                                                 HorizontalAlignment="Right" VerticalAlignment="Top">
@@ -421,9 +413,9 @@
                                 <Border Grid.Column="1" Style="{StaticResource Card}" CornerRadius="14" Padding="16,13" Margin="12,0">
                                     <Grid>
                                         <StackPanel>
-                                            <TextBlock Text="DURATION" Style="{StaticResource Micro}" />
+                                            <TextBlock Text="{DynamicResource S_DURATION}" Style="{StaticResource Micro}" />
                                             <TextBlock x:Name="StatDuration" Text="00:00" Style="{StaticResource Metric}" FontSize="27" Margin="0,3,0,0" />
-                                            <TextBlock Text="of pure cursor energy" Style="{StaticResource Caption}" FontSize="10.5" />
+                                            <TextBlock Text="{DynamicResource S_of_pure_cursor_energy}" Style="{StaticResource Caption}" FontSize="10.5" />
                                         </StackPanel>
                                         <Border Width="32" Height="32" CornerRadius="10" Background="#12303A"
                                                 HorizontalAlignment="Right" VerticalAlignment="Top">
@@ -440,9 +432,9 @@
                                 <Border Grid.Column="2" Style="{StaticResource Card}" CornerRadius="14" Padding="16,13">
                                     <Grid>
                                         <StackPanel>
-                                            <TextBlock Text="CLICKS" Style="{StaticResource Micro}" />
+                                            <TextBlock Text="{DynamicResource S_CLICKS}" Style="{StaticResource Micro}" />
                                             <TextBlock x:Name="StatClicks" Text="0" Style="{StaticResource Metric}" FontSize="27" Margin="0,3,0,0" />
-                                            <TextBlock Text="tiny acts of intention" Style="{StaticResource Caption}" FontSize="10.5" />
+                                            <TextBlock Text="{DynamicResource S_tiny_acts_of_intention}" Style="{StaticResource Caption}" FontSize="10.5" />
                                         </StackPanel>
                                         <Border Width="32" Height="32" CornerRadius="10" Background="#2A1016"
                                                 HorizontalAlignment="Right" VerticalAlignment="Top">
@@ -468,20 +460,20 @@
 
                                     <Grid>
                                         <StackPanel>
-                                            <TextBlock Text="Motion timeline" Style="{StaticResource H3}" />
-                                            <TextBlock x:Name="TimelineTakeName" Text="Nothing recorded yet" Style="{StaticResource Caption}"
+                                            <TextBlock Text="{DynamicResource S_Motion_timeline}" Style="{StaticResource H3}" />
+                                            <TextBlock x:Name="TimelineTakeName" Text="{DynamicResource S_Nothing_recorded_yet}" Style="{StaticResource Caption}"
                                                        FontSize="10.5" Margin="0,2,0,0" />
                                         </StackPanel>
                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                                             <Border Background="#12151C" BorderBrush="{DynamicResource LineBrush}" BorderThickness="1"
                                                     CornerRadius="8" Padding="9,5" Margin="0,0,8,0">
-                                                <TextBlock x:Name="TimelineEventCount" Text="0 events" Style="{StaticResource Caption}" FontSize="10" />
+                                                <TextBlock x:Name="TimelineEventCount" Text="{DynamicResource S_0_events}" Style="{StaticResource Caption}" FontSize="10" />
                                             </Border>
                                             <Button x:Name="TimelinePlayButton" Style="{StaticResource AccentQuietButton}"
                                                     Click="PlayLast_Click" Padding="11,6">
                                                 <StackPanel Orientation="Horizontal">
                                                     <TextBlock x:Name="TimelinePlayIcon" Text="▶" FontSize="8" VerticalAlignment="Center" Margin="0,1,6,0" />
-                                                    <TextBlock x:Name="TimelinePlayText" Text="Play take" FontSize="11.5" />
+                                                    <TextBlock x:Name="TimelinePlayText" Text="{DynamicResource S_Play_take}" FontSize="11.5" />
                                                 </StackPanel>
                                             </Button>
                                         </StackPanel>
@@ -499,26 +491,26 @@
 
                                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                             <Ellipse Width="6" Height="6" Fill="#FF5D6E" Margin="0,0,5,0" />
-                                            <TextBlock Text="left" Style="{StaticResource Caption}" FontSize="9.5" Margin="0,0,9,0" />
+                                            <TextBlock Text="{DynamicResource S_left}" Style="{StaticResource Caption}" FontSize="9.5" Margin="0,0,9,0" />
                                             <Ellipse Width="6" Height="6" Fill="#FBB040" Margin="0,0,5,0" />
-                                            <TextBlock Text="right" Style="{StaticResource Caption}" FontSize="9.5" Margin="0,0,9,0" />
+                                            <TextBlock Text="{DynamicResource S_right}" Style="{StaticResource Caption}" FontSize="9.5" Margin="0,0,9,0" />
                                             <Ellipse Width="6" Height="6" Fill="#22D3EE" Margin="0,0,5,0" />
-                                            <TextBlock Text="middle" Style="{StaticResource Caption}" FontSize="9.5" />
+                                            <TextBlock Text="{DynamicResource S_middle}" Style="{StaticResource Caption}" FontSize="9.5" />
                                         </StackPanel>
 
                                         <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,16,0">
-                                            <TextBlock Text="SPEED" Style="{StaticResource Micro}" VerticalAlignment="Center" Margin="0,0,8,0" />
+                                            <TextBlock Text="{DynamicResource S_SPEED}" Style="{StaticResource Micro}" VerticalAlignment="Center" Margin="0,0,8,0" />
                                             <Slider x:Name="SpeedSlider" Style="{StaticResource AccentSlider}" Width="104"
                                                     Minimum="0.25" Maximum="3" SmallChange="0.25" LargeChange="0.25"
                                                     Value="1" ValueChanged="SpeedSlider_ValueChanged" />
-                                            <TextBlock x:Name="SpeedLabel" Text="1.0×" FontSize="10.5" FontWeight="SemiBold"
+                                            <TextBlock x:Name="SpeedLabel" Text="{DynamicResource S_1_0}" FontSize="10.5" FontWeight="SemiBold"
                                                        Foreground="{DynamicResource TextBrush}" Margin="8,0,0,0" VerticalAlignment="Center" Width="30" />
                                         </StackPanel>
 
                                         <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center">
                                             <CheckBox x:Name="LoopToggle" Style="{StaticResource Switch}" Checked="LoopToggle_Changed"
                                                       Unchecked="LoopToggle_Changed" Width="38" Height="21" />
-                                            <TextBlock Text="LOOP" Style="{StaticResource Micro}" VerticalAlignment="Center" Margin="7,0,0,0" />
+                                            <TextBlock Text="{DynamicResource S_LOOP}" Style="{StaticResource Micro}" VerticalAlignment="Center" Margin="7,0,0,0" />
                                         </StackPanel>
                                     </Grid>
                                 </Grid>
@@ -536,8 +528,8 @@
 
                         <Grid>
                             <StackPanel>
-                                <TextBlock Text="The archive" Style="{StaticResource H1}" FontSize="30" LineHeight="33" />
-                                <TextBlock Text="Every take, saved locally. Replay, rename or delete." Style="{StaticResource Caption}" Margin="0,3,0,0" />
+                                <TextBlock Text="{DynamicResource S_The_archive}" Style="{StaticResource H1}" FontSize="30" LineHeight="33" />
+                                <TextBlock Text="{DynamicResource S_Every_take_saved_locally_Replay_rename_or_delete}" Style="{StaticResource Caption}" Margin="0,3,0,0" />
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                                 <Grid Width="238" Margin="0,0,9,0">
@@ -545,13 +537,13 @@
                                              TextChanged="ArchiveSearch_TextChanged" />
                                     <TextBlock Text="&#xE721;" FontFamily="Segoe MDL2 Assets" FontSize="12" Foreground="{DynamicResource FaintBrush}"
                                                VerticalAlignment="Center" Margin="12,0,0,0" IsHitTestVisible="False" />
-                                    <TextBlock x:Name="SearchPlaceholder" Text="Search takes…" FontSize="11.5" Foreground="#555D6E"
+                                    <TextBlock x:Name="SearchPlaceholder" Text="{DynamicResource S_Search_takes}" FontSize="11.5" Foreground="#555D6E"
                                                VerticalAlignment="Center" Margin="34,0,0,0" IsHitTestVisible="False" />
                                 </Grid>
                                 <Button Style="{StaticResource PrimaryButton}" Click="NewTake_Click" Padding="15,10">
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Text="+" FontSize="15" Margin="0,0,8,0" VerticalAlignment="Center" />
-                                        <TextBlock Text="New take" FontSize="12" />
+                                        <TextBlock Text="{DynamicResource S_New_take}" FontSize="12" />
                                     </StackPanel>
                                 </Button>
                             </StackPanel>
@@ -563,12 +555,12 @@
                                         BorderThickness="1" CornerRadius="9" Padding="12,7">
                                     <StackPanel Orientation="Horizontal">
                                         <Ellipse Width="5" Height="5" Fill="{DynamicResource AccentBrush}" VerticalAlignment="Center" Margin="0,0,7,0" />
-                                        <TextBlock x:Name="ArchiveSummary" Text="0 takes · 0 clicks" Style="{StaticResource Caption}" FontSize="11" />
+                                        <TextBlock x:Name="ArchiveSummary" Text="{DynamicResource S_0_takes_0_clicks}" Style="{StaticResource Caption}" FontSize="11" />
                                     </StackPanel>
                                 </Border>
                                 <Border Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource LineBrush}"
                                         BorderThickness="1" CornerRadius="9" Padding="12,7" Margin="8,0,0,0">
-                                    <TextBlock x:Name="ArchiveTotalTime" Text="00:00 recorded" Style="{StaticResource Caption}" FontSize="11" />
+                                    <TextBlock x:Name="ArchiveTotalTime" Text="{DynamicResource S_00_00_recorded}" Style="{StaticResource Caption}" FontSize="11" />
                                 </Border>
                             </StackPanel>
                         </Grid>
@@ -611,13 +603,13 @@
                                                                FontSize="10" Foreground="#B2B8C6" />
                                                 </Border>
                                                 <Button Style="{StaticResource IconButton}" Content="&#xE768;"
-                                                        FontFamily="Segoe MDL2 Assets" FontSize="12" ToolTip="Play take"
+                                                        FontFamily="Segoe MDL2 Assets" FontSize="12" ToolTip="{DynamicResource S_Play_take}"
                                                         Tag="{Binding}" Click="PlayRecording_Click" />
                                                 <Button Style="{StaticResource IconButton}" Content="&#xE70F;"
-                                                        FontFamily="Segoe MDL2 Assets" FontSize="12" ToolTip="Rename"
+                                                        FontFamily="Segoe MDL2 Assets" FontSize="12" ToolTip="{DynamicResource S_Rename}"
                                                         Tag="{Binding}" Click="RenameRecording_Click" />
                                                 <Button Style="{StaticResource IconButton}" Content="&#xE74D;"
-                                                        FontFamily="Segoe MDL2 Assets" FontSize="12" ToolTip="Delete"
+                                                        FontFamily="Segoe MDL2 Assets" FontSize="12" ToolTip="{DynamicResource S_Delete}"
                                                         Tag="{Binding}" Click="DeleteRecording_Click" Foreground="#B76570" />
                                             </StackPanel>
                                         </Grid>
@@ -632,13 +624,13 @@
                                         <Path Data="M5,3 L5,20 L10,15 L13.5,22 L16.4,20.6 L13,14 L20,14 Z" Fill="{DynamicResource AccentBrush}"
                                               Stretch="Uniform" Width="26" Height="28" />
                                     </Border>
-                                    <TextBlock x:Name="ArchiveEmptyTitle" Text="Your archive is a blank canvas" Style="{StaticResource H2}"
+                                    <TextBlock x:Name="ArchiveEmptyTitle" Text="{DynamicResource S_Your_archive_is_a_blank_canvas}" Style="{StaticResource H2}"
                                                FontSize="21" HorizontalAlignment="Center" Margin="0,17,0,0" />
-                                    <TextBlock x:Name="ArchiveEmptyText" Text="Record a take and it will land here automatically. No cloud, no account, no nonsense."
+                                    <TextBlock x:Name="ArchiveEmptyText" Text="{DynamicResource S_Record_a_take_and_it_will_land_here_automaticall}"
                                                Style="{StaticResource Body}" TextAlignment="Center" Margin="0,7,0,0" />
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,18,0,0">
-                                        <Button Content="Start recording" Style="{StaticResource PrimaryButton}" Click="NewTake_Click" Padding="16,10" />
-                                        <Button Content="Watch demo" Style="{StaticResource GhostButton}" Click="Demo_Click" Margin="9,0,0,0" Padding="16,10" />
+                                        <Button Content="{DynamicResource S_Start_recording}" Style="{StaticResource PrimaryButton}" Click="NewTake_Click" Padding="16,10" />
+                                        <Button Content="{DynamicResource S_Watch_demo}" Style="{StaticResource GhostButton}" Click="Demo_Click" Margin="9,0,0,0" Padding="16,10" />
                                     </StackPanel>
                                 </StackPanel>
                             </Border>
@@ -650,15 +642,15 @@
                         <StackPanel Margin="0,0,8,0">
                             <Grid>
                                 <StackPanel>
-                                    <TextBlock Text="Heatmap" Style="{StaticResource H1}" FontSize="30" LineHeight="33" />
-                                    <TextBlock Text="A diary of every place your cursor has ever been." Style="{StaticResource Caption}" Margin="0,3,0,0" />
+                                    <TextBlock Text="{DynamicResource S_Heatmap}" Style="{StaticResource H1}" FontSize="30" LineHeight="33" />
+                                    <TextBlock Text="{DynamicResource S_A_diary_of_every_place_your_cursor_has_ever_been}" Style="{StaticResource Caption}" Margin="0,3,0,0" />
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                                    <Button Content="Copy stats" Style="{StaticResource GhostButton}" Click="CopyStats_Click" Padding="14,9" FontSize="12" />
+                                    <Button Content="{DynamicResource S_Copy_stats}" Style="{StaticResource GhostButton}" Click="CopyStats_Click" Padding="14,9" FontSize="12" />
                                     <Button Style="{StaticResource AccentQuietButton}" Click="ExportHeatmap_Click" Margin="8,0,0,0">
                                         <StackPanel Orientation="Horizontal">
                                             <TextBlock Text="↓" FontSize="12" Margin="0,0,7,0" />
-                                            <TextBlock Text="Export card" FontSize="12" />
+                                            <TextBlock Text="{DynamicResource S_Export_card}" FontSize="12" />
                                         </StackPanel>
                                     </Button>
                                 </StackPanel>
@@ -681,28 +673,28 @@
 
                                             <Grid>
                                                 <StackPanel>
-                                                    <TextBlock Text="ALL-TIME HEATMAP" Style="{StaticResource Eyebrow}" />
-                                                    <TextBlock Text="Where your clicks land" Style="{StaticResource H2}" FontSize="21" Margin="0,5,0,0" />
+                                                    <TextBlock Text="{DynamicResource S_ALL_TIME_HEATMAP}" Style="{StaticResource Eyebrow}" />
+                                                    <TextBlock Text="{DynamicResource S_Where_your_clicks_land}" Style="{StaticResource H2}" FontSize="21" Margin="0,5,0,0" />
                                                 </StackPanel>
                                                 <Border Background="#11141B" BorderBrush="{DynamicResource LineBrush}" BorderThickness="1"
                                                         CornerRadius="99" Padding="10,5" HorizontalAlignment="Right" VerticalAlignment="Top">
-                                                    <TextBlock x:Name="HeatTakeCount" Text="0 takes" Style="{StaticResource Caption}" FontSize="10" />
+                                                    <TextBlock x:Name="HeatTakeCount" Text="{DynamicResource S_0_takes}" Style="{StaticResource Caption}" FontSize="10" />
                                                 </Border>
                                             </Grid>
 
                                             <Grid Grid.Row="1" Margin="0,12,0,0">
                                                 <controls:HeatmapControl x:Name="Heatmap" Height="402" />
                                                 <StackPanel x:Name="HeatmapEmpty" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                    <TextBlock Text="Nothing to heat up yet" Style="{StaticResource H3}" HorizontalAlignment="Center" />
-                                                    <TextBlock Text="Record a take or summon the demo." Style="{StaticResource Caption}" HorizontalAlignment="Center" Margin="0,4,0,0" />
-                                                    <Button Content="Watch demo" Style="{StaticResource AccentQuietButton}" Click="Demo_Click"
+                                                    <TextBlock Text="{DynamicResource S_Nothing_to_heat_up_yet}" Style="{StaticResource H3}" HorizontalAlignment="Center" />
+                                                    <TextBlock Text="{DynamicResource S_Record_a_take_or_summon_the_demo}" Style="{StaticResource Caption}" HorizontalAlignment="Center" Margin="0,4,0,0" />
+                                                    <Button Content="{DynamicResource S_Watch_demo}" Style="{StaticResource AccentQuietButton}" Click="Demo_Click"
                                                             HorizontalAlignment="Center" Margin="0,12,0,0" />
                                                 </StackPanel>
                                             </Grid>
 
                                             <Grid Grid.Row="2" Margin="0,8,0,0">
                                                 <StackPanel Orientation="Horizontal">
-                                                    <TextBlock Text="COLD" Style="{StaticResource Micro}" VerticalAlignment="Center" Margin="0,0,6,0" />
+                                                    <TextBlock Text="{DynamicResource S_COLD}" Style="{StaticResource Micro}" VerticalAlignment="Center" Margin="0,0,6,0" />
                                                     <Border Width="82" Height="6" CornerRadius="3">
                                                         <Border.Background>
                                                             <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
@@ -713,9 +705,9 @@
                                                             </LinearGradientBrush>
                                                         </Border.Background>
                                                     </Border>
-                                                    <TextBlock Text="HOT" Style="{StaticResource Micro}" VerticalAlignment="Center" Margin="6,0,0,0" />
+                                                    <TextBlock Text="{DynamicResource S_HOT}" Style="{StaticResource Micro}" VerticalAlignment="Center" Margin="6,0,0,0" />
                                                 </StackPanel>
-                                                <TextBlock Text="Click density · all takes" Style="{StaticResource Caption}" FontSize="10"
+                                                <TextBlock Text="{DynamicResource S_Click_density_all_takes}" Style="{StaticResource Caption}" FontSize="10"
                                                            HorizontalAlignment="Right" VerticalAlignment="Center" />
                                             </Grid>
                                         </Grid>
@@ -724,19 +716,19 @@
                                     <StackPanel Grid.Column="1" Margin="14,0,0,0">
                                         <Border Style="{StaticResource Card}" Padding="18,15">
                                             <StackPanel>
-                                                <TextBlock Text="TOTAL CLICKS" Style="{StaticResource Micro}" />
+                                                <TextBlock Text="{DynamicResource S_TOTAL_CLICKS}" Style="{StaticResource Micro}" />
                                                 <TextBlock x:Name="HeatTotal" Text="0" Style="{StaticResource Metric}" FontSize="38" Margin="0,2,0,0" />
-                                                <TextBlock x:Name="HeatTakesLabel" Text="No data yet" Style="{StaticResource Caption}" FontSize="10.5" />
+                                                <TextBlock x:Name="HeatTakesLabel" Text="{DynamicResource S_No_data_yet}" Style="{StaticResource Caption}" FontSize="10.5" />
 
                                                 <Border Style="{StaticResource Divider}" Margin="0,12" />
 
                                                 <Grid Margin="0,0,0,8">
-                                                    <TextBlock Text="Hot zone" Style="{StaticResource Caption}" FontSize="11" />
+                                                    <TextBlock Text="{DynamicResource S_Hot_zone}" Style="{StaticResource Caption}" FontSize="11" />
                                                     <TextBlock x:Name="HeatHotspot" Text="—" FontSize="11.5" FontWeight="SemiBold"
                                                                HorizontalAlignment="Right" Foreground="{DynamicResource TextBrush}" />
                                                 </Grid>
                                                 <Grid Margin="0,0,0,11">
-                                                    <TextBlock Text="Favourite button" Style="{StaticResource Caption}" FontSize="11" />
+                                                    <TextBlock Text="{DynamicResource S_Favourite_button}" Style="{StaticResource Caption}" FontSize="11" />
                                                     <TextBlock x:Name="HeatButton" Text="—" FontSize="11.5" FontWeight="SemiBold"
                                                                HorizontalAlignment="Right" Foreground="{DynamicResource TextBrush}" />
                                                 </Grid>
@@ -760,15 +752,15 @@
 
                                         <Border Style="{StaticResource Card}" Padding="18,15" Margin="0,12,0,0">
                                             <StackPanel>
-                                                <TextBlock Text="CURSOR ROAST" Style="{StaticResource Eyebrow}" />
-                                                <TextBlock x:Name="RoastText" Text="Record a little chaos and I'll judge your cursor."
+                                                <TextBlock Text="{DynamicResource S_CURSOR_ROAST}" Style="{StaticResource Eyebrow}" />
+                                                <TextBlock x:Name="RoastText" Text="{DynamicResource S_Record_a_little_chaos_and_I_ll_judge_your_cursor}"
                                                            Style="{StaticResource Body}" FontSize="12" FontStyle="Italic" Margin="0,7,0,0" />
-                                                <Button Content="Another one ↻" Style="{StaticResource QuietButton}" HorizontalAlignment="Left"
+                                                <Button Content="{DynamicResource S_Another_one}" Style="{StaticResource QuietButton}" HorizontalAlignment="Left"
                                                         Padding="0,8,0,0" Click="Roast_Click" FontSize="11" />
                                             </StackPanel>
                                         </Border>
 
-                                        <TextBlock Text="mauserecorder · made of clicks" Style="{StaticResource Caption}" FontSize="8.5"
+                                        <TextBlock Text="{DynamicResource S_mauserecorder_made_of_clicks}" Style="{StaticResource Caption}" FontSize="8.5"
                                                    HorizontalAlignment="Center" Margin="0,11,0,0" Foreground="#414858" />
                                     </StackPanel>
                                 </Grid>
@@ -780,8 +772,8 @@
                     <ScrollViewer x:Name="SettingsPage" Style="{StaticResource PageScroll}" Visibility="Collapsed">
                         <StackPanel Margin="0,0,8,0">
                             <StackPanel>
-                                <TextBlock Text="Settings" Style="{StaticResource H1}" FontSize="30" LineHeight="33" />
-                                <TextBlock Text="Make MauseRecorder behave exactly how you like." Style="{StaticResource Caption}" Margin="0,3,0,0" />
+                                <TextBlock Text="{DynamicResource S_Settings}" Style="{StaticResource H1}" FontSize="30" LineHeight="33" />
+                                <TextBlock Text="{DynamicResource S_Make_MauseRecorder_behave_exactly_how_you_like}" Style="{StaticResource Caption}" Margin="0,3,0,0" />
                             </StackPanel>
 
                             <Grid Margin="0,18,0,0">
@@ -791,23 +783,45 @@
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel Margin="0,0,7,0">
+                                    <Border Style="{StaticResource Card}" Padding="20,16" Margin="0,0,0,12">
+                                        <StackPanel>
+                                            <TextBlock Text="{DynamicResource S_LANGUAGE}" Style="{StaticResource Eyebrow}" />
+                                            <TextBlock Text="{DynamicResource S_Choose_your_language}" Style="{StaticResource Caption}" FontSize="10.5" Margin="0,3,0,0" />
+
+                                            <Border Style="{StaticResource Divider}" />
+
+                                            <Grid>
+                                                <StackPanel Margin="0,0,150,0">
+                                                    <TextBlock Text="{DynamicResource S_Language}" Style="{StaticResource SettingTitle}" />
+                                                    <TextBlock Text="{DynamicResource S_Applies_instantly}" Style="{StaticResource SettingNote}" />
+                                                </StackPanel>
+                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                                    <RadioButton x:Name="LangEnglish" Content="English" Style="{StaticResource ChipRadio}"
+                                                                 GroupName="Language" Tag="en" Checked="Language_Checked" Margin="0,0,6,0" />
+                                                    <RadioButton x:Name="LangRussian" Content="Русский" Style="{StaticResource ChipRadio}"
+                                                                 GroupName="Language" Tag="ru" Checked="Language_Checked" />
+                                                </StackPanel>
+                                            </Grid>
+                                        </StackPanel>
+                                    </Border>
+
                                     <Border Style="{StaticResource Card}" Padding="20,16">
                                         <StackPanel>
-                                            <TextBlock Text="PLAYBACK" Style="{StaticResource Eyebrow}" />
-                                            <TextBlock Text="How your takes come back to life." Style="{StaticResource Caption}" FontSize="10.5" Margin="0,3,0,0" />
+                                            <TextBlock Text="{DynamicResource S_PLAYBACK}" Style="{StaticResource Eyebrow}" />
+                                            <TextBlock Text="{DynamicResource S_How_your_takes_come_back_to_life}" Style="{StaticResource Caption}" FontSize="10.5" Margin="0,3,0,0" />
 
                                             <Border Style="{StaticResource Divider}" />
 
                                             <Grid>
                                                 <StackPanel>
-                                                    <TextBlock Text="Default speed" Style="{StaticResource SettingTitle}" />
-                                                    <TextBlock Text="Slow and dramatic, or suspiciously fast." Style="{StaticResource SettingNote}" />
+                                                    <TextBlock Text="{DynamicResource S_Default_speed}" Style="{StaticResource SettingTitle}" />
+                                                    <TextBlock Text="{DynamicResource S_Slow_and_dramatic_or_suspiciously_fast}" Style="{StaticResource SettingNote}" />
                                                 </StackPanel>
                                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                                                     <Slider x:Name="SettingsSpeedSlider" Style="{StaticResource AccentSlider}" Width="104"
                                                             Minimum="0.25" Maximum="3" SmallChange="0.25" LargeChange="0.25"
                                                             Value="1" ValueChanged="SettingsSpeedSlider_ValueChanged" />
-                                                    <TextBlock x:Name="SettingsSpeedLabel" Text="1.0×" FontSize="11" FontWeight="SemiBold"
+                                                    <TextBlock x:Name="SettingsSpeedLabel" Text="{DynamicResource S_1_0}" FontSize="11" FontWeight="SemiBold"
                                                                Width="32" TextAlignment="Right" VerticalAlignment="Center" Margin="8,0,0,0" />
                                                 </StackPanel>
                                             </Grid>
@@ -815,8 +829,8 @@
                                             <Border Style="{StaticResource Divider}" Margin="0,12" />
                                             <Grid>
                                                 <StackPanel Margin="0,0,72,0">
-                                                    <TextBlock Text="Loop forever" Style="{StaticResource SettingTitle}" />
-                                                    <TextBlock Text="Because once was never enough." Style="{StaticResource SettingNote}" />
+                                                    <TextBlock Text="{DynamicResource S_Loop_forever}" Style="{StaticResource SettingTitle}" />
+                                                    <TextBlock Text="{DynamicResource S_Because_once_was_never_enough}" Style="{StaticResource SettingNote}" />
                                                 </StackPanel>
                                                 <CheckBox x:Name="SettingsLoopToggle" Style="{StaticResource Switch}" VerticalAlignment="Center"
                                                           Checked="LoopToggle_Changed" Unchecked="LoopToggle_Changed" />
@@ -825,8 +839,8 @@
                                             <Border Style="{StaticResource Divider}" Margin="0,12" />
                                             <Grid>
                                                 <StackPanel Margin="0,0,72,0">
-                                                    <TextBlock Text="Click sounds" Style="{StaticResource SettingTitle}" />
-                                                    <TextBlock Text="A satisfying tick for every click." Style="{StaticResource SettingNote}" />
+                                                    <TextBlock Text="{DynamicResource S_Click_sounds}" Style="{StaticResource SettingTitle}" />
+                                                    <TextBlock Text="{DynamicResource S_A_satisfying_tick_for_every_click}" Style="{StaticResource SettingNote}" />
                                                 </StackPanel>
                                                 <CheckBox x:Name="ClickSoundToggle" Style="{StaticResource Switch}" VerticalAlignment="Center"
                                                           Checked="SettingToggle_Changed" Unchecked="SettingToggle_Changed" />
@@ -835,8 +849,8 @@
                                             <Border Style="{StaticResource Divider}" Margin="0,12" />
                                             <Grid>
                                                 <StackPanel Margin="0,0,72,0">
-                                                    <TextBlock Text="Party mode" Style="{StaticResource SettingTitle}" />
-                                                    <TextBlock Text="Confetti when a replay ends. Mandatory fun." Style="{StaticResource SettingNote}" />
+                                                    <TextBlock Text="{DynamicResource S_Party_mode}" Style="{StaticResource SettingTitle}" />
+                                                    <TextBlock Text="{DynamicResource S_Confetti_when_a_replay_ends_Mandatory_fun}" Style="{StaticResource SettingNote}" />
                                                 </StackPanel>
                                                 <CheckBox x:Name="PartyToggle" Style="{StaticResource Switch}" VerticalAlignment="Center"
                                                           Checked="SettingToggle_Changed" Unchecked="SettingToggle_Changed" />
@@ -845,8 +859,8 @@
                                             <Border Style="{StaticResource Divider}" Margin="0,12" />
                                             <Grid>
                                                 <StackPanel Margin="0,0,72,0">
-                                                    <TextBlock Text="Gremlin mode" Style="{StaticResource SettingTitle}" />
-                                                    <TextBlock Text="Adds ±5 px of chaos to every click. Unhinged." Style="{StaticResource SettingNote}" />
+                                                    <TextBlock Text="{DynamicResource S_Gremlin_mode}" Style="{StaticResource SettingTitle}" />
+                                                    <TextBlock Text="{DynamicResource S_Adds_5_px_of_chaos_to_every_click_Unhinged}" Style="{StaticResource SettingNote}" />
                                                 </StackPanel>
                                                 <CheckBox x:Name="GremlinToggle" Style="{StaticResource Switch}" VerticalAlignment="Center"
                                                           Checked="SettingToggle_Changed" Unchecked="SettingToggle_Changed" />
@@ -856,22 +870,22 @@
 
                                     <Border Style="{StaticResource Card}" Padding="20,16" Margin="0,12,0,0">
                                         <StackPanel>
-                                            <TextBlock Text="CAPTURE" Style="{StaticResource Eyebrow}" />
-                                            <TextBlock Text="What gets written into a take." Style="{StaticResource Caption}" FontSize="10.5" Margin="0,3,0,0" />
+                                            <TextBlock Text="{DynamicResource S_CAPTURE}" Style="{StaticResource Eyebrow}" />
+                                            <TextBlock Text="{DynamicResource S_What_gets_written_into_a_take}" Style="{StaticResource Caption}" FontSize="10.5" Margin="0,3,0,0" />
 
                                             <Border Style="{StaticResource Divider}" />
 
                                             <Grid>
-                                                <StackPanel Margin="0,0,124,0">
-                                                    <TextBlock Text="Countdown" Style="{StaticResource SettingTitle}" />
-                                                    <TextBlock Text="Time to switch windows before the magic starts." Style="{StaticResource SettingNote}" />
+                                                <StackPanel Margin="0,0,190,0">
+                                                    <TextBlock Text="{DynamicResource S_Countdown}" Style="{StaticResource SettingTitle}" />
+                                                    <TextBlock Text="{DynamicResource S_Time_to_switch_windows_before_the_magic_starts}" Style="{StaticResource SettingNote}" TextWrapping="Wrap" />
                                                 </StackPanel>
                                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                                                    <RadioButton x:Name="CountdownOff" Content="Off" Style="{StaticResource ChipRadio}"
+                                                    <RadioButton x:Name="CountdownOff" Content="{DynamicResource S_Off}" Style="{StaticResource ChipRadio}"
                                                                  GroupName="Countdown" Tag="0" Checked="Countdown_Checked" Margin="0,0,5,0" />
-                                                    <RadioButton x:Name="Countdown3" Content="3s" Style="{StaticResource ChipRadio}"
+                                                    <RadioButton x:Name="Countdown3" Content="{DynamicResource S_3s}" Style="{StaticResource ChipRadio}"
                                                                  GroupName="Countdown" Tag="3" Checked="Countdown_Checked" Margin="0,0,5,0" />
-                                                    <RadioButton x:Name="Countdown5" Content="5s" Style="{StaticResource ChipRadio}"
+                                                    <RadioButton x:Name="Countdown5" Content="{DynamicResource S_5s}" Style="{StaticResource ChipRadio}"
                                                                  GroupName="Countdown" Tag="5" Checked="Countdown_Checked" />
                                                 </StackPanel>
                                             </Grid>
@@ -879,8 +893,8 @@
                                             <Border Style="{StaticResource Divider}" Margin="0,12" />
                                             <Grid>
                                                 <StackPanel Margin="0,0,72,0">
-                                                    <TextBlock Text="Capture mouse motion" Style="{StaticResource SettingTitle}" />
-                                                    <TextBlock Text="Turn off for clicks-only, teleport-style takes." Style="{StaticResource SettingNote}" />
+                                                    <TextBlock Text="{DynamicResource S_Capture_mouse_motion}" Style="{StaticResource SettingTitle}" />
+                                                    <TextBlock Text="{DynamicResource S_Turn_off_for_clicks_only_teleport_style_takes}" Style="{StaticResource SettingNote}" />
                                                 </StackPanel>
                                                 <CheckBox x:Name="MotionToggle" Style="{StaticResource Switch}" VerticalAlignment="Center"
                                                           Checked="SettingToggle_Changed" Unchecked="SettingToggle_Changed" />
@@ -889,8 +903,8 @@
                                             <Border Style="{StaticResource Divider}" Margin="0,12" />
                                             <Grid>
                                                 <StackPanel Margin="0,0,72,0">
-                                                    <TextBlock Text="Minimize while recording" Style="{StaticResource SettingTitle}" />
-                                                    <TextBlock Text="Get the app out of the way and into the vibe." Style="{StaticResource SettingNote}" />
+                                                    <TextBlock Text="{DynamicResource S_Minimize_while_recording}" Style="{StaticResource SettingTitle}" />
+                                                    <TextBlock Text="{DynamicResource S_Get_the_app_out_of_the_way_and_into_the_vibe}" Style="{StaticResource SettingNote}" />
                                                 </StackPanel>
                                                 <CheckBox x:Name="MinimizeRecordToggle" Style="{StaticResource Switch}" VerticalAlignment="Center"
                                                           Checked="SettingToggle_Changed" Unchecked="SettingToggle_Changed" />
@@ -899,8 +913,8 @@
                                             <Border Style="{StaticResource Divider}" Margin="0,12" />
                                             <Grid>
                                                 <StackPanel Margin="0,0,72,0">
-                                                    <TextBlock Text="Minimize while replaying" Style="{StaticResource SettingTitle}" />
-                                                    <TextBlock Text="Prevents a replay from clicking MauseRecorder itself." Style="{StaticResource SettingNote}" />
+                                                    <TextBlock Text="{DynamicResource S_Minimize_while_replaying}" Style="{StaticResource SettingTitle}" />
+                                                    <TextBlock Text="{DynamicResource S_Prevents_a_replay_from_clicking_MauseRecorder_it}" Style="{StaticResource SettingNote}" />
                                                 </StackPanel>
                                                 <CheckBox x:Name="MinimizePlayToggle" Style="{StaticResource Switch}" VerticalAlignment="Center"
                                                           Checked="SettingToggle_Changed" Unchecked="SettingToggle_Changed" />
@@ -909,8 +923,8 @@
                                             <Border Style="{StaticResource Divider}" Margin="0,12" />
                                             <Grid>
                                                 <StackPanel Margin="0,0,72,0">
-                                                    <TextBlock Text="Recording HUD" Style="{StaticResource SettingTitle}" />
-                                                    <TextBlock Text="A tiny floating stop button while recording." Style="{StaticResource SettingNote}" />
+                                                    <TextBlock Text="{DynamicResource S_Recording_HUD}" Style="{StaticResource SettingTitle}" />
+                                                    <TextBlock Text="{DynamicResource S_A_tiny_floating_stop_button_while_recording}" Style="{StaticResource SettingNote}" />
                                                 </StackPanel>
                                                 <CheckBox x:Name="HudToggle" Style="{StaticResource Switch}" VerticalAlignment="Center"
                                                           Checked="SettingToggle_Changed" Unchecked="SettingToggle_Changed" />
@@ -920,34 +934,34 @@
 
                                     <Border Style="{StaticResource Card}" Padding="20,16" Margin="0,12,0,0">
                                         <StackPanel>
-                                            <TextBlock Text="APPEARANCE" Style="{StaticResource Eyebrow}" />
-                                            <TextBlock Text="Black is a lifestyle. Pick a sidekick colour." Style="{StaticResource Caption}"
+                                            <TextBlock Text="{DynamicResource S_APPEARANCE}" Style="{StaticResource Eyebrow}" />
+                                            <TextBlock Text="{DynamicResource S_Black_is_a_lifestyle_Pick_a_sidekick_colour}" Style="{StaticResource Caption}"
                                                        FontSize="10.5" Margin="0,3,0,0" />
 
                                             <Border Style="{StaticResource Divider}" />
 
                                             <Grid>
                                                 <StackPanel Margin="0,0,128,0">
-                                                    <TextBlock Text="Accent colour" Style="{StaticResource SettingTitle}" />
-                                                    <TextBlock Text="Repaints the whole app. Instantly." Style="{StaticResource SettingNote}" />
+                                                    <TextBlock Text="{DynamicResource S_Accent_colour}" Style="{StaticResource SettingTitle}" />
+                                                    <TextBlock Text="{DynamicResource S_Repaints_the_whole_app_Instantly}" Style="{StaticResource SettingNote}" />
                                                 </StackPanel>
                                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                                                     <RadioButton x:Name="AccentViolet" Style="{StaticResource AccentSwatch}" GroupName="Accent"
-                                                                 Background="#8B5CF6" Tag="Violet" Checked="Accent_Checked" Margin="0,0,7,0" ToolTip="Violet" />
+                                                                 Background="#8B5CF6" Tag="Violet" Checked="Accent_Checked" Margin="0,0,7,0" ToolTip="{DynamicResource S_Violet}" />
                                                     <RadioButton x:Name="AccentCyan" Style="{StaticResource AccentSwatch}" GroupName="Accent"
-                                                                 Background="#22D3EE" Tag="Cyan" Checked="Accent_Checked" Margin="0,0,7,0" ToolTip="Cyan" />
+                                                                 Background="#22D3EE" Tag="Cyan" Checked="Accent_Checked" Margin="0,0,7,0" ToolTip="{DynamicResource S_Cyan}" />
                                                     <RadioButton x:Name="AccentLime" Style="{StaticResource AccentSwatch}" GroupName="Accent"
-                                                                 Background="#A3E635" Tag="Lime" Checked="Accent_Checked" Margin="0,0,7,0" ToolTip="Lime" />
+                                                                 Background="#A3E635" Tag="Lime" Checked="Accent_Checked" Margin="0,0,7,0" ToolTip="{DynamicResource S_Lime}" />
                                                     <RadioButton x:Name="AccentSunset" Style="{StaticResource AccentSwatch}" GroupName="Accent"
-                                                                 Background="#FB7185" Tag="Sunset" Checked="Accent_Checked" ToolTip="Sunset" />
+                                                                 Background="#FB7185" Tag="Sunset" Checked="Accent_Checked" ToolTip="{DynamicResource S_Sunset}" />
                                                 </StackPanel>
                                             </Grid>
 
                                             <Border Style="{StaticResource Divider}" Margin="0,12" />
                                             <Grid>
                                                 <StackPanel Margin="0,0,72,0">
-                                                    <TextBlock Text="Always on top" Style="{StaticResource SettingTitle}" />
-                                                    <TextBlock Text="For people who like to watch." Style="{StaticResource SettingNote}" />
+                                                    <TextBlock Text="{DynamicResource S_Always_on_top}" Style="{StaticResource SettingTitle}" />
+                                                    <TextBlock Text="{DynamicResource S_For_people_who_like_to_watch}" Style="{StaticResource SettingNote}" />
                                                 </StackPanel>
                                                 <CheckBox x:Name="TopmostToggle" Style="{StaticResource Switch}" VerticalAlignment="Center"
                                                           Checked="SettingToggle_Changed" Unchecked="SettingToggle_Changed" />
@@ -959,43 +973,41 @@
                                 <StackPanel Grid.Column="1" Margin="7,0,0,0">
                                     <Border Style="{StaticResource Card}" Padding="20,16">
                                         <StackPanel>
-                                            <TextBlock Text="HOTKEYS" Style="{StaticResource Eyebrow}" />
-                                            <TextBlock Text="They work even when you're in another app." Style="{StaticResource Caption}"
+                                            <TextBlock Text="{DynamicResource S_HOTKEYS}" Style="{StaticResource Eyebrow}" />
+                                            <TextBlock Text="{DynamicResource S_They_work_even_when_you_re_in_another_app}" Style="{StaticResource Caption}"
                                                        FontSize="10.5" Margin="0,3,0,0" />
 
                                             <Border Style="{StaticResource Divider}" />
 
                                             <Grid Margin="0,0,0,11">
-                                                <TextBlock Text="Start / stop recording" Style="{StaticResource SettingTitle}" FontSize="12.5" />
-                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                                    <Border Style="{StaticResource KeyCap}"><TextBlock Text="Ctrl" FontSize="9.5" Foreground="#A5ACBC" /></Border>
-                                                    <Border Style="{StaticResource KeyCap}"><TextBlock Text="Alt" FontSize="9.5" Foreground="#A5ACBC" /></Border>
-                                                    <Border Style="{StaticResource KeyCap}" Margin="0"><TextBlock Text="R" FontSize="9.5" Foreground="#A5ACBC" /></Border>
-                                                </StackPanel>
+                                                <TextBlock Text="{DynamicResource S_Start_stop_recording}" Style="{StaticResource SettingTitle}" FontSize="12.5" VerticalAlignment="Center" />
+                                                <Button x:Name="HotkeyRecordButton" Style="{StaticResource KeyCapButton}" HorizontalAlignment="Right"
+                                                        Click="HotkeyCapture_Click" Tag="Record">
+                                                    <TextBlock x:Name="HotkeyRecordText" Text="Ctrl + Alt + R" />
+                                                </Button>
                                             </Grid>
                                             <Grid Margin="0,0,0,11">
-                                                <TextBlock Text="Play / stop replay" Style="{StaticResource SettingTitle}" FontSize="12.5" />
-                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                                    <Border Style="{StaticResource KeyCap}"><TextBlock Text="Ctrl" FontSize="9.5" Foreground="#A5ACBC" /></Border>
-                                                    <Border Style="{StaticResource KeyCap}"><TextBlock Text="Alt" FontSize="9.5" Foreground="#A5ACBC" /></Border>
-                                                    <Border Style="{StaticResource KeyCap}" Margin="0"><TextBlock Text="P" FontSize="9.5" Foreground="#A5ACBC" /></Border>
-                                                </StackPanel>
+                                                <TextBlock Text="{DynamicResource S_Play_stop_replay}" Style="{StaticResource SettingTitle}" FontSize="12.5" VerticalAlignment="Center" />
+                                                <Button x:Name="HotkeyPlayButton" Style="{StaticResource KeyCapButton}" HorizontalAlignment="Right"
+                                                        Click="HotkeyCapture_Click" Tag="Play">
+                                                    <TextBlock x:Name="HotkeyPlayText" Text="Ctrl + Alt + P" />
+                                                </Button>
                                             </Grid>
                                             <Grid>
-                                                <TextBlock Text="Show / hide window" Style="{StaticResource SettingTitle}" FontSize="12.5" />
-                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                                    <Border Style="{StaticResource KeyCap}"><TextBlock Text="Ctrl" FontSize="9.5" Foreground="#A5ACBC" /></Border>
-                                                    <Border Style="{StaticResource KeyCap}"><TextBlock Text="Alt" FontSize="9.5" Foreground="#A5ACBC" /></Border>
-                                                    <Border Style="{StaticResource KeyCap}" Margin="0"><TextBlock Text="H" FontSize="9.5" Foreground="#A5ACBC" /></Border>
-                                                </StackPanel>
+                                                <TextBlock Text="{DynamicResource S_Show_hide_window}" Style="{StaticResource SettingTitle}" FontSize="12.5" VerticalAlignment="Center" />
+                                                <Button x:Name="HotkeyShowButton" Style="{StaticResource KeyCapButton}" HorizontalAlignment="Right"
+                                                        Click="HotkeyCapture_Click" Tag="Show">
+                                                    <TextBlock x:Name="HotkeyShowText" Text="Ctrl + Alt + H" />
+                                                </Button>
                                             </Grid>
+                                            <TextBlock Text="{DynamicResource S_Click_a_shortcut_then_press_the_new_keys}" Style="{StaticResource SettingNote}" Margin="0,10,0,0" />
                                         </StackPanel>
                                     </Border>
 
                                     <Border Style="{StaticResource Card}" Padding="20,16" Margin="0,12,0,0">
                                         <StackPanel>
-                                            <TextBlock Text="YOUR DATA" Style="{StaticResource Eyebrow}" />
-                                            <TextBlock Text="100% local. Yours forever." Style="{StaticResource Caption}" FontSize="10.5" Margin="0,3,0,0" />
+                                            <TextBlock Text="{DynamicResource S_YOUR_DATA}" Style="{StaticResource Eyebrow}" />
+                                            <TextBlock Text="{DynamicResource S_100_local_Yours_forever}" Style="{StaticResource Caption}" FontSize="10.5" Margin="0,3,0,0" />
 
                                             <Border Style="{StaticResource Divider}" />
 
@@ -1003,8 +1015,8 @@
                                                        Foreground="#6D7586" />
 
                                             <StackPanel Orientation="Horizontal" Margin="0,13,0,0">
-                                                <Button Content="Open folder" Style="{StaticResource GhostButton}" Click="OpenFolder_Click" Padding="12,8" FontSize="11.5" />
-                                                <Button Content="Clear archive" Style="{StaticResource DangerQuietButton}" Click="ClearArchive_Click" Margin="8,0,0,0" FontSize="11.5" />
+                                                <Button Content="{DynamicResource S_Open_folder}" Style="{StaticResource GhostButton}" Click="OpenFolder_Click" Padding="12,8" FontSize="11.5" />
+                                                <Button Content="{DynamicResource S_Clear_archive}" Style="{StaticResource DangerQuietButton}" Click="ClearArchive_Click" Margin="8,0,0,0" FontSize="11.5" />
                                             </StackPanel>
                                         </StackPanel>
                                     </Border>
@@ -1017,15 +1029,15 @@
                                                           Fill="#08080B" Stretch="Uniform" Width="19" Height="20" />
                                                 </Border>
                                                 <StackPanel Margin="11,0,0,0" VerticalAlignment="Center">
-                                                    <TextBlock Text="MauseRecorder" Style="{StaticResource H3}" />
-                                                    <TextBlock Text="v1.0.0 · Made of clicks" Style="{StaticResource Caption}" FontSize="9.5" />
+                                                    <TextBlock Text="{DynamicResource S_MauseRecorder}" Style="{StaticResource H3}" />
+                                                    <TextBlock Text="{DynamicResource S_v1_0_0_Made_of_clicks}" Style="{StaticResource Caption}" FontSize="9.5" />
                                                 </StackPanel>
                                             </StackPanel>
-                                            <TextBlock Text="A tiny Windows studio for recording, replaying and gently roasting your mouse habits."
+                                            <TextBlock Text="{DynamicResource S_A_tiny_Windows_studio_for_recording_replaying_an}"
                                                        Style="{StaticResource Body}" FontSize="11.5" Margin="0,12,0,0" />
                                             <StackPanel Orientation="Horizontal" Margin="0,14,0,0">
-                                                <Button Content="★  Star on GitHub" Style="{StaticResource AccentQuietButton}" Click="StarGithub_Click" FontSize="11.5" />
-                                                <Button Content="Reset settings" Style="{StaticResource QuietButton}" Click="ResetSettings_Click" FontSize="11" Margin="6,0,0,0" />
+                                                <Button Content="{DynamicResource S_Star_on_GitHub}" Style="{StaticResource AccentQuietButton}" Click="StarGithub_Click" FontSize="11.5" />
+                                                <Button Content="{DynamicResource S_Reset_settings}" Style="{StaticResource QuietButton}" Click="ResetSettings_Click" FontSize="11" Margin="6,0,0,0" />
                                             </StackPanel>
                                         </StackPanel>
                                     </Border>
@@ -1048,7 +1060,7 @@
                                            HorizontalAlignment="Center" VerticalAlignment="Center" />
                             </Border>
                             <StackPanel Margin="10,0,4,0" MaxWidth="300">
-                                <TextBlock x:Name="ToastTitle" Text="Take saved" Style="{StaticResource H3}" FontSize="12.5" />
+                                <TextBlock x:Name="ToastTitle" Text="{DynamicResource S_Take_saved}" Style="{StaticResource H3}" FontSize="12.5" />
                                 <TextBlock x:Name="ToastText" Text="" Style="{StaticResource Caption}" FontSize="11"
                                            TextWrapping="Wrap" Margin="0,2,0,0" />
                             </StackPanel>
