@@ -66,7 +66,7 @@ MauseRecorder is a tiny Windows studio for recording and replaying your mouse. P
 
 Grab the latest `MauseRecorder-win-x64.zip` from the [**Releases**](../../releases) page, unzip it anywhere and run `MauseRecorder.exe`. That's it — it's fully self-contained, so you don't even need .NET installed.
 
-> Windows SmartScreen may warn about an unsigned app. Click **More info → Run anyway**.
+> **Unsigned build:** MauseRecorder is a free, community-built app and the binary is **not code-signed**. Windows may therefore show **"Unknown publisher"** ("Не удается проверить издателя / Неизвестный издатель") the first time you run it. This is expected — click **More info → Run anyway** (**Подробнее → Выполнить в любом случае**). The full source is right here, so you can also build it yourself.
 
 ## 🎮 How to use
 
@@ -193,6 +193,8 @@ Pull requests are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md). Ideas, bug
 - 🔒 Всё локально: `%APPDATA%\MauseRecorder`, без телеметрии и без сети
 
 **Установка:** скачайте `MauseRecorder-win-x64.zip` из раздела [Releases](../../releases), распакуйте и запустите `MauseRecorder.exe`. Установка не нужна — .NET внутри.
+
+> **Сборка без подписи:** приложение не подписано код-сертификатом, поэтому Windows может показать «Издатель: Неизвестный издатель». Это нормально — нажмите **«Подробнее» → «Выполнить в любом случае»**. Либо соберите сами из исходников.
 
 Сделано с любовью к курсору. 🖱️
 
